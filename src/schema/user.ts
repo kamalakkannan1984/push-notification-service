@@ -1,265 +1,138 @@
 /**
  * @createdBy Kamal
- * @createdOn 05th Mar 2020
+ * @createdOn 24th Apirl 2020
  */
 
 let user: any = {};
 
 /* ##################################################################################### */
 
-//user signup request schema
-user.commanReq = {
+//registered_users
+user.registeredUsersReq = {
   body: {
     type: 'object',
     properties: {
-      trans_id: { type: 'string' },
-      db_name: { type: 'string', enum: ['XGREGISTAR', 'unifiedring_pbx'] },
-      db_operation: {
-        type: 'string',
-        enum: ['READ', 'WRITE', 'UPDATE', 'DELETE', 'EXECUTE'],
-      },
-      table_name: { type: 'string' },
-      sp_name: {
-        type: 'string', enum: ['sip_do_user_registration',
-          'sip_authenticate_user_registration',
-          'sip_get_user_password',
-          'sip_update_registered_status',
-          'sip_delete_user_registration',
-          'sip_get_Registered_user_info']
-      },
-      input: {
-        type: 'object',
-        properties: {
-          Call_id: { type: 'string' },
-          domain_name: { type: 'string' },
-          Contact_address: { type: 'string' },
-          Ipaddress: { type: 'string' },
-          IpAddress_type: { type: 'number' },
-          Username: { type: 'string' },
-          Password: { type: 'string' },
-          AAA: { type: 'number' },
-          expires: { type: 'number' },
-          Request_cseq: { type: 'number' },
-          status: { type: 'number' },
-          proxy_username: { type: 'string' },
-          device_type: { type: 'string' },
-          mac_address: { type: 'string' },
-          user_id: { type: 'string' }
-        },
-      },
+      host: { type: 'string' }
     },
-    required: ['trans_id', 'db_name', 'db_operation', 'table_name', 'sp_name', 'input'],
+    required: ['host'],
   },
 };
 
-user.commanRes = {
+user.registeredUsersRes = {
   200: {
     type: 'object',
     properties: {
-      trans_id: { type: 'string' },
-      db_name: { type: 'string', enum: ['XGREGISTAR', 'unifiedring_pbx'] },
-      db_operation: {
-        type: 'string',
-        enum: ['READ', 'WRITE', 'UPDATE', 'DELETE', 'EXECUTE'],
-      },
-      table_name: { type: 'string' },
-      sp_name: {
-        type: 'string', enum: ['sip_do_user_registration',
-          'sip_authenticate_user_registration',
-          'sip_get_user_password',
-          'sip_update_registered_status',
-          'sip_delete_user_registration',
-          'sip_get_Registered_user_info']
-      },
-      input: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: { type: 'array', items: { type: "string" } }
+    }
+  },
+};
+
+//get_presence
+user.getPresenceReq = {
+  body: {
+    type: 'object',
+    properties: {
+      user: { type: 'string' },
+      server: { type: "string" }
+    },
+    required: ['user', 'server'],
+  },
+};
+/*
+"result": {
+        "jid": "3036@im01.unifiedring.co.uk/UnifiedRing.JEu9",
+        "show": "available",
+        "status": ""
+    }
+*/
+user.getPresenceRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: {
         type: 'object',
         properties: {
-          Call_id: { type: 'string' },
-          domain_name: { type: 'string' },
-          Contact_address: { type: 'string' },
-          Ipaddress: { type: 'string' },
-          IpAddress_type: { type: 'number' },
-          Username: { type: 'string' },
-          Password: { type: 'string' },
-          AAA: { type: 'number' },
-          expires: { type: 'number' },
-          Request_cseq: { type: 'number' },
-          status: { type: 'number' },
-          proxy_username: { type: 'string' },
-          device_type: { type: 'string' },
-          mac_address: { type: 'string' },
-          user_id: { type: 'string' }
-        },
-      },
-      output: {},
-      msg: {
+          jid: { type: "string" },
+          show: { type: "string" },
+          status: { type: "string" }
+        }
+      }
+    }
+  },
+};
+
+//connected_users_number
+user.connectedUsersNumberRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: {
         type: 'object',
         properties: {
-          affected_rows: { type: 'number' },
-          status_code: { type: 'number' },
-          err_code: { type: 'number' },
-          message: { type: 'string' },
-          error: {}
-        },
-      },
-    },
+          num_sessions: { type: "number" }
+        }
+      }
+    }
   },
 };
 
-/*sip_authenticate_user_registration */
-/* mand_fields : call_id,domain_name,contact_address,username*/
-user.sip_reg_auth = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        Call_id: { type: 'string' },
-        domain_name: { type: 'string' },
-        Contact_address: { type: 'string' },
-        Username: { type: 'string' }
-      },
-      required: ['Call_id', 'domain_name', 'Contact_address', 'Username'],
-    },
+//connected_users
+user.connectedUsersRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: { type: 'array', items: { type: "string" } }
+    }
   },
 };
 
-/* sip_get_user_password*/
-/* o   mand_fields : domain_name,mobileno/username*/
-
-user.sip_get_password = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        user_id: { type: 'string' },
-        domain_name: { type: 'string' }
-      },
-      required: ['user_id', 'domain_name'],
-    },
+//status
+user.statusRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: 'string' }
+    }
   },
 };
 
-/* @Call_idvarchar(50),
-@Domain_namevarchar(150),
-@Username varchar(100),
-@status int
+//register
+/*
+"user": "bob",
+"host": "example.com",
+"password": "SomEPass44"
 */
-/* sip_update_registered_status*/
-user.sip_update_status = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        Call_id: { type: 'string' },
-        domain_name: { type: 'string' },
-        Username: { type: 'string' },
-        status: { type: 'number' }
-
-      },
-      required: ['Call_id', 'domain_name', 'Username', 'status'],
+user.registerReq = {
+  body: {
+    type: 'object',
+    properties: {
+      user: { type: 'string' },
+      host: { type: 'string' },
+      password: { type: 'string' }
     },
+    required: ['user', 'host', 'password'],
   },
 };
 
-/* sip_delete_user_registration */
-/* @caller_idvarchar(50),
-@Domain_namevarchar(150),
-@Contact_addressvarchar(100),
-@Username varchar(100)
-*/
-
-user.sip_delete_user = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        Call_id: { type: 'string' },
-        domain_name: { type: 'string' },
-        Username: { type: 'string' },
-        Contact_address: { type: 'string' }
-      },
-      required: ['Call_id', 'domain_name', 'Username', 'Contact_address'],
-    },
+user.registerRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: { type: "string" }
+    }
   },
 };
-
-/* sip_get_Registered_user_info  */
-
-user.sip_get_user = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        domain_name: { type: 'string' },
-        Username: { type: 'string' }
-      },
-      required: ['domain_name', 'Username'],
-    },
-  },
-};
-/*sip_do_user_registration*/
-/*"Call_id": "121d5332-408f-1238-f1b4-83897910f890",
-        "domain_name": "vectoneapp.webrtc.mundio.com",
-        "Contact_address": "79.11.57.202",
-        "Ipaddress": "79.11.57.204",
-        "IpAddress_type": "0",
-        "Password": "243536546",
-        "AAA": "1",
-        "expires": "3600",
-        "Request_cseq": "8743909",
-        "status": "1",
-        "proxy_username": "",
-        "device_type": "",
-        "mac_address": "" */
-/* o   mand_fields : call_id,domain_name,contact_address,ipaddress,ipaddress_type,username,
-
-      password,aaa,expires,request_cseq,proxy_username,device_type
-
-o   opt fields       :  status,mac_address*/
-user.sip_do_reg = {
-  type: 'object',
-  properties: {
-    input: {
-      type: 'object',
-      properties: {
-        Call_id: { type: 'string' },
-        domain_name: { type: 'string' },
-        Contact_address: { type: 'string' },
-        Ipaddress: { type: 'string' },
-        IpAddress_type: { type: 'number' },
-        Username: { type: 'string' },
-        Password: { type: 'string' },
-        AAA: { type: 'number' },
-        expires: { type: 'number' },
-        Request_cseq: { type: 'number' },
-        status: { type: 'number' },
-        proxy_username: { type: 'string' },
-        device_type: { type: 'string' },
-        mac_address: { type: 'string' },
-      },
-      required: [
-        'Call_id',
-        'domain_name',
-        'Contact_address',
-        'Ipaddress',
-        'IpAddress_type',
-        'Username',
-        'Password',
-        'AAA',
-        'expires',
-        'Request_cseq',
-        'proxy_username',
-        'device_type',
-      ],
-    },
-  },
-};
-
 /* ############################################################################################################## */
 
 export const userSchema: any = user;
