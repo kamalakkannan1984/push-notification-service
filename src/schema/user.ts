@@ -116,10 +116,10 @@ user.registerReq = {
     type: 'object',
     properties: {
       user: { type: 'string' },
-      host: { type: 'string' },
-      password: { type: 'string' }
+      password: { type: 'string' },
+      company_id: { type: "number" }
     },
-    required: ['user', 'host', 'password'],
+    required: ['user', 'password', 'company_id'],
   },
 };
 
@@ -133,6 +133,117 @@ user.registerRes = {
     }
   },
 };
+
+//Creat Team
+
+user.createTeamReq = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      service: { type: 'string' },
+      host: { type: 'string' }
+    },
+    required: ['name', 'service', 'host'],
+  },
+};
+
+user.createTeamRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: "number" },
+      message: { type: "string" },
+      result: { type: "string" }
+    }
+  },
+};
+// Create team with options
+/*
+{
+      "name": "room1",
+      "service": "muc.example.com",
+      "host": "localhost",
+      "options": [
+        {
+          "name": "members_only",
+          "value": "true"
+        }
+      ]
+    }*/
+user.createTeamWithOptsReq = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      service: { type: 'string' },
+      host: { type: 'string' },
+      options: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          value: { type: 'boolean' }
+        }
+      }
+    },
+    required: ['name', 'service', 'host', 'options'],
+  },
+}
+
+//unsubscribeRoomReq
+
+user.unsubscribeRoomReq = {
+  body: {
+    type: 'object',
+    properties: {
+      user: { type: 'string' },
+      room: { type: 'string' }
+    },
+    required: ['user', 'room'],
+  },
+}
+
+//getTeamInfo
+/*
+{
+    "company_id": 1698,
+    "team_id": 31,
+    "extension": 528
+}
+*/
+user.getTeamInfo = {
+  body: {
+    type: 'object',
+    properties: {
+      company_id: { type: 'number' },
+      team_id: { type: 'number' },
+      extension: { type: 'string' }
+    },
+    required: ['company_id', 'team_id', 'extension'],
+  },
+}
+
+//sendMessage
+/*type :: string : Message type: normal, chat, headline, groupchat   --- type="groupchat | chat" , 
+from :: string : Sender JID    ----from-jid,
+to :: string : Receiver JID    ----to-jid
+subject :: string : Subject, or empty string
+body :: string : Body  ----body
+*/
+user.sendMessage = {
+  body: {
+    type: 'object',
+    properties: {
+      type: { type: 'string', enum: ['normal', 'chat', 'headline', 'groupchat'] },
+      from: { type: 'string' },
+      to: { type: 'string' },
+      subject: { type: 'string' },
+      body: { type: 'string' },
+    },
+    required: ['type', 'from', 'to', 'subject', 'body'],
+  },
+}
+
 /* ############################################################################################################## */
 
 export const userSchema: any = user;

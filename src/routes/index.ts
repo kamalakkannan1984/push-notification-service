@@ -48,11 +48,51 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     }
   }
 
+  const optCreateTeam = {
+    schema: {
+      body: userSchema.createTeamReq.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optCreateTeamWithOpts = {
+    schema: {
+      body: userSchema.createTeamWithOptsReq.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optUnsubscribeRoom = {
+    schema: {
+      body: userSchema.unsubscribeRoomReq.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optGetTeamInfo = {
+    schema: {
+      body: userSchema.getTeamInfo.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optSendMessage = {
+    schema: {
+      body: userSchema.sendMessage.body,
+      //response: userSchema.createTeamRes
+    }
+  }
   fastify.get('/api/status', optStatus, apihandler.getStatus);
   fastify.post('/api/registered_users', opts, apihandler.getRegisteredUsers);
   fastify.post('/api/get_presence', optsGetPresence, apihandler.getPresence);
   fastify.get('/api/connected_users', optConnectedUsers, apihandler.getConnectedUsers);
   fastify.get('/api/connected_users_number', optConnectedUsersNumber, apihandler.getConnectedUsersNumber);
   fastify.post('/api/register', optRegister, apihandler.register);
+  fastify.post('/api/create_team', optCreateTeam, apihandler.createTeam);
+  fastify.post('/api/create_room_with_opts', optCreateTeamWithOpts, apihandler.createTeamWithOpts);
+  fastify.post('/api/unsubscribe_room', optUnsubscribeRoom, apihandler.unsubscribeRoom);
+  //.net api
+  fastify.post('/api/get_team_info', optGetTeamInfo, apihandler.getTeamInfo);
+  fastify.post('/api/send_message', optSendMessage, apihandler.sendMessage);
   done();
 };

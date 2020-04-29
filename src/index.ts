@@ -14,7 +14,6 @@ const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> =
 server.register(require('fastify-swagger'), config.swagger_options);
 server.register(require('fastify-cors'), config.cors_options);
 
-
 //add hooks with relevant handlers
 server.addHook('preHandler', utils.formReqData);
 server.addHook('onResponse', utils.formResData);
