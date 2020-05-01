@@ -5,7 +5,7 @@
 
 export const config = {
   server: {//82.113.74.51
-    host: process.env.HOST ? process.env.HOST : '82.113.74.51',
+    host: process.env.HOST ? process.env.HOST : 'localhost',
     port: process.env.PORT ? process.env.PORT : 5002,
   },
   logger_level: process.env.LOGGER_LEVEL,
@@ -29,10 +29,10 @@ export const config = {
     exposeRoute: true,
     routePrefix: '/api/documentation',
     swagger: {
-      host: `${process.env.HOST ? process.env.HOST : '82.113.74.51'}:${process.env.PORT ? process.env.PORT : 5002}`,
+      host: `${process.env.HOST ? process.env.HOST : 'localhost'}:${process.env.PORT ? process.env.PORT : 5002}`,
       info: {
-        title: 'SIP',
-        description: 'sip api swagger documentation',
+        title: 'Ejabberd Rest API Service',
+        description: 'Ejabberd Rest api swagger documentation',
         version: process.env.VERSION,
       },
       consumes: ['application/json'],

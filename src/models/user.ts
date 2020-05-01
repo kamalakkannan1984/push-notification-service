@@ -52,8 +52,8 @@ userModel.getCompanyContact = (company_id: number) => {
         //request.input('timestamp', sql.Int, 0)
         //sp name: ur_app_get_sip_login
         request.input('company_id', sql.Int, company_id)
-        //request.output('output_parameter', sql.Int)
-
+        //request.output('sip_login_id', sql.Text)
+        //request.output('caller_id', sql.Text)
         request.execute('ur_app_get_sip_login', (err: any, result: any) => {
           // ... error checks
           if (err) {
@@ -69,4 +69,44 @@ userModel.getCompanyContact = (company_id: number) => {
   });
 };
 
+//saveCreateTeam
+userModel.saveCreateTeam = (data: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');;
+      pool.connect().then(() => {
+        const request = new sql.Request(pool);
+        const dataArr = data;
+        request.input('company_id', sql.Int, dataArr.company_id)
+        request.input('team_id', sql.Int, dataArr.team_id)
+        request.input('team_name', sql.Text, dataArr.team_name)
+        request.input('team_type', sql.Int, dataArr.team_type)
+        request.input('description', sql.Text, dataArr.description)
+        request.input('created_by', sql.Int, dataArr.created_by)
+        request.input('processtype', sql.Int, 1)
+        request.input('except_guest', sql.Int, dataArr.except_guest)
+        request.input('post_msg', sql.Int, dataArr.post_msg)
+        request.input('mention', sql.Int, dataArr.mention)
+        request.input('integration', sql.Int, dataArr.integration)
+        request.input('pin_post', sql.Int, dataArr.pin_post)
+        request.input('add_members', sql.Text, dataArr.add_members)
+        request.input('team_guid', sql.Text, dataArr.team_guid)
+        request.input('profile_image_url', sql.Text, dataArr.photo_info)
+        //request.input('archived', sql.Text, "")
+        //request.input('Delete_image', sql.Text, 'false')
+        //request.input('get_image', sql.Text, 'false')
+        request.execute('ur_app_create_team_info', (err: any, result: any) => {
+          // ... error checks
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(result.recordset[0]);
+        })
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 //module.exports = userModel;

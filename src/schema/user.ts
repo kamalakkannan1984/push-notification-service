@@ -115,11 +115,11 @@ user.registerReq = {
   body: {
     type: 'object',
     properties: {
-      user: { type: 'string' },
+      userid: { type: 'string' },
       password: { type: 'string' },
       company_id: { type: "number" }
     },
-    required: ['user', 'password', 'company_id'],
+    required: ['userid', 'password', 'company_id'],
   },
 };
 
@@ -140,11 +140,22 @@ user.createTeamReq = {
   body: {
     type: 'object',
     properties: {
-      name: { type: 'string' },
-      service: { type: 'string' },
-      host: { type: 'string' }
+      company_id: { type: 'number' },
+      team_id: { type: 'number' },
+      team_name: { type: 'string' },
+      team_type: { type: 'number' },
+      description: { type: 'string' },
+      created_by: { type: 'number' },
+      except_guest: { type: 'number' },
+      post_msg: { type: 'number' },
+      mention: { type: 'number' },
+      integration: { type: 'number' },
+      pin_post: { type: 'number' },
+      add_members: { type: 'string' },
+      team_guid: { type: 'string' },
+      photo_info: { type: 'string' },
     },
-    required: ['name', 'service', 'host'],
+    required: ['company_id', 'team_id', 'team_name', 'description', 'add_members', 'team_guid'],
   },
 };
 
@@ -179,7 +190,7 @@ user.createTeamWithOptsReq = {
       service: { type: 'string' },
       host: { type: 'string' },
       options: {
-        type: 'object',
+        type: 'array',
         properties: {
           name: { type: 'string' },
           value: { type: 'boolean' }
@@ -224,12 +235,6 @@ user.getTeamInfo = {
 }
 
 //sendMessage
-/*type :: string : Message type: normal, chat, headline, groupchat   --- type="groupchat | chat" , 
-from :: string : Sender JID    ----from-jid,
-to :: string : Receiver JID    ----to-jid
-subject :: string : Subject, or empty string
-body :: string : Body  ----body
-*/
 user.sendMessage = {
   body: {
     type: 'object',
@@ -244,6 +249,31 @@ user.sendMessage = {
   },
 }
 
+//sendStanza
+user.sendStanza = {
+  body: {
+    type: 'object',
+    properties: {
+      from: { type: 'string' },
+      to: { type: 'string' },
+      stanza: { type: 'string' }
+    },
+    required: ['from', 'to', 'stanza'],
+  },
+}
+//destroyRoom
+/*"name": "room1",
+      "service": "muc.example.com"*/
+user.destroyRoom = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      service: { type: 'string' }
+    },
+    required: ['name', 'service'],
+  },
+}
 /* ############################################################################################################## */
 
 export const userSchema: any = user;

@@ -82,6 +82,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       //response: userSchema.createTeamRes
     }
   }
+
+  const optSendStanza = {
+    schema: {
+      body: userSchema.sendStanza.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optDestroyRoom = {
+    schema: {
+      body: userSchema.destroyRoom.body,
+      //response: userSchema.createTeamRes
+    }
+  }
   fastify.get('/api/status', optStatus, apihandler.getStatus);
   fastify.post('/api/registered_users', opts, apihandler.getRegisteredUsers);
   fastify.post('/api/get_presence', optsGetPresence, apihandler.getPresence);
@@ -94,5 +108,9 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   //.net api
   fastify.post('/api/get_team_info', optGetTeamInfo, apihandler.getTeamInfo);
   fastify.post('/api/send_message', optSendMessage, apihandler.sendMessage);
+  fastify.post('/api/send_stanza', optSendStanza, apihandler.sendStanza);
+  fastify.post('/api/get_room_options', apihandler.getRoomOptions);
+  fastify.post('/api/get_room_affiliations', apihandler.getRoomAffiliations);
+  fastify.post('/api/destroy_room', optDestroyRoom, apihandler.destroyRoom);
   done();
 };

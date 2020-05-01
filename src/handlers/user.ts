@@ -104,7 +104,7 @@ userHandler.getConnectedUsersNumber = async function (req: any, res: any, done: 
 //register
 userHandler.register = async function (req: any, res: any, done: any) {
   try {
-    const user = req.body.user;
+    const user = req.body.userid;
     const host = 'im01.unifiedring.co.uk';
     const password = req.body.password;
     const company_id = req.body.company_id;
@@ -114,6 +114,7 @@ userHandler.register = async function (req: any, res: any, done: any) {
       res.send({ status_code: 200, message: registerResult.message });
     } else {
       const recordsets = await userModel.getCompanyContact(company_id);
+      //console.log(recordsets);
       for (let i = 0; i < recordsets.length; i++) {
         if (recordsets[i].sip_login_id > 0) {
           data = {
@@ -130,33 +131,6 @@ userHandler.register = async function (req: any, res: any, done: any) {
       }
       res.send({ status_code: 200, message: registerResult });
     }
-
-
-
-    /*
-     id: 8238,
-  mobileno: '',
-  ext: 690,
-  caller_id: 'PPC Team',
-  login_user_name: '690@vectone.com',
-  sip_login_id: '2703',
-  tmestmp: '1580820972',
-  user_status: '',
-  email_id: 's.prasanna@vectone.com',
-  status_msg: '',
-  company_id: 1698,
-  direct_no: null,
-  ImageURL: null,
-  first_name: 'PPC',
-  last_name: 'Team',
-  company_name: 'Unifiedring',
-  is_muted: 0,
-  is_blocked: 0,
-  is_favourite: 0,
-  department: 'PPC ',
-  role_name: 'Registered'
-    */
-
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
@@ -172,21 +146,75 @@ userHandler.register = async function (req: any, res: any, done: any) {
 */
 userHandler.createTeam = async function (req: any, res: any, done: any) {
   try {
-    const name = req.body.name;
-    const service = req.body.service;
-    const host = req.body.host;
-    console.log(req.body);
-    console.log(client);
-    //client.createRoom(name, service, host)
-    await client.createRoom(name, service, host).then((result: any) => {
-      console.log("YES");
-      console.log(result);
-      res.send({ status_code: 200, result: result });
-    }).catch((err: any) => {
-      console.log("NO");
-      console.log(err);
-      res.send({ status_code: 500, message: 'internal server error' });
-    });
+    let data: any = {};
+    data.company_id = req.body.company_id;
+    data.team_id = req.body.team_id;
+    data.team_name = req.body.team_name;
+    data.team_type = req.body.team_type;
+    data.description = req.body.description;
+    data.created_by = req.body.created_by;
+    data.processtype = 1;
+    data.except_guest = req.body.except_guest;
+    data.post_msg = req.body.post_msg;
+    data.mention = req.body.mention;
+    data.integration = req.body.integration;
+    data.pin_post = req.body.pin_post;
+    data.add_members = req.body.add_members;
+    data.team_guid = req.body.team_guid;
+    data.photo_info = req.body.photo_info;
+    const recordsets = await userModel.saveCreateTeam(data);
+    console.log(recordsets);
+    if (recordsets.errcode === 0) {
+      let teamData: any = {};
+      teamData.name = data.team_guid;
+      teamData.service = "conference.im01.unifiedring.co.uk";
+      teamData.host = "im01.unifiedring.co.uk";
+      teamData.options = [
+        {
+          "name": "members_only",
+          "value": "true"
+        },
+        {
+          "name": "title",
+          "value": data.team_name
+        },
+        {
+          "name": "description",
+          "value": data.description
+        }
+      ];
+      const createTeamResult = await ejabberdService.createTeamWithOpts(teamData);
+      console.log("team create result");
+      console.log(createTeamResult);
+      if (createTeamResult == 0) {
+        let members = data.add_members;
+        let memberArr = members.split(",");
+        let userIdArr = [];
+        for (let i = 0; i < memberArr.length; i++) {
+          teamData.jid = memberArr[i] + "@im01.unifiedring.co.uk";
+          teamData.affiliation = "member";
+          const aff = await ejabberdService.setRoomAffiliation(teamData);
+          console.log("Affiliation");
+          console.log(aff);
+          userIdArr.push(teamData.jid);
+        }
+        teamData.jid = data.created_by + "@im01.unifiedring.co.uk";
+        teamData.affiliation = "owner";
+        await ejabberdService.setRoomAffiliation(teamData);
+        teamData.password = "";
+        teamData.reason = data.team_name;
+        teamData.users = userIdArr.join(':');
+        const inv = await ejabberdService.sendDirectInvitation(teamData);
+        console.log("invitation");
+        console.log(inv);
+        res.send({ status_code: 200, message: recordsets.errmsg });
+      } else {
+        res.send({ status_code: 200, message: "Team create failed" });
+      }
+    } else {
+      //failed case
+      res.send({ status_code: 404, message: recordsets.errmsg });
+    }
   } catch (err) {
     console.log("ERROR");
     console.log(err);
@@ -202,18 +230,19 @@ userHandler.createTeamWithOpts = async function (req: any, res: any, done: any) 
     const service = req.body.service;
     const host = req.body.host;
     const options = req.body.options;
-    console.log(req.body);
-    console.log(client);
-    //client.createRoomWithOpts(name, service, host, options)
-    await client.createRoomWithOpts(name, service, host, options).then((result: any) => {
-      console.log("YES");
-      console.log(result);
-      res.send({ status_code: 200, result: result });
-    }).catch((err: any) => {
-      console.log("NO");
-      console.log(err);
-      res.send({ status_code: 500, message: 'internal server error' });
-    });
+    let data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    data.host = req.body.host;
+    data.options = req.body.options;
+
+    const sendMessageResult = await ejabberdService.createTeamWithOpts(data);
+    console.log(sendMessageResult);
+    if (sendMessageResult === 0) {
+      res.send({ status_code: 200, message: "Team created successfully" });
+    } else {
+      res.send({ status_code: 200, message: "Team create failed" });
+    }
   } catch (err) {
     console.log("ERROR");
     console.log(err);
@@ -225,21 +254,18 @@ userHandler.createTeamWithOpts = async function (req: any, res: any, done: any) 
 //unsubscribeRoom
 userHandler.unsubscribeRoom = async function (req: any, res: any, done: any) {
   try {
-    const user = req.body.user;
-    const room = req.body.room;
-    console.log(req.body);
-    //client.unsubscribeRoom(user, room)
-    await client.unsubscribeRoom(user, room).then((result: any) => {
-      console.log("YES");
-      console.log(result);
-      res.send({ status_code: 200, result: result });
-    }).catch((err: any) => {
-      console.log("NO");
-      console.log(err);
-      res.send({ status_code: 500, message: 'internal server error' });
-    });
+    let data: any = {};
+    data.user = req.body.user;
+    data.room = req.body.room;
+    const unsubscribeRoomResult = await ejabberdService.unsubscribeRoom(data);
+    console.log(unsubscribeRoomResult);
+    if (unsubscribeRoomResult === 0) {
+      res.send({ status_code: 200, message: "User unsubscribed successfully" });
+    } else {
+      res.send({ status_code: 200, message: "Unsubscribe failed" });
+    }
+
   } catch (err) {
-    console.log("ERROR");
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
   }
@@ -278,7 +304,7 @@ userHandler.sendMessage = async function (req: any, res: any, done: any) {
     data.from = req.body.from;
     data.to = req.body.to;
     data.subject = req.body.subject;
-    data.body = req.body.body
+    data.body = req.body.body;
     const sendMessageResult = await ejabberdService.sendMessage(data);
     console.log(sendMessageResult);
     if (sendMessageResult === 0) {
@@ -286,10 +312,127 @@ userHandler.sendMessage = async function (req: any, res: any, done: any) {
     } else {
       res.send({ status_code: 200, message: "Message sent failed" });
     }
-
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
   }
 }
+/*
+"from": "admin@localhost",
+      "to": "user1@localhost",
+      "stanza": "<message><ext attr='value'/></message>"
+*/
+//sendStanza
+userHandler.sendStanza = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.from = req.body.from;
+    data.to = req.body.to;
+    data.stanza = req.body.stanza;
+    const sendMessageResult = await ejabberdService.sendStanza(data);
+    console.log(sendMessageResult);
+    if (sendMessageResult === 0) {
+      res.send({ status_code: 200, message: "Message sent successfully" });
+    } else {
+      res.send({ status_code: 200, message: "Message sent failed" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+}
+
+//destroyRoom
+userHandler.destroyRoom = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    const destroyRoomResult = await ejabberdService.destroyRoom(data);
+    console.log(destroyRoomResult);
+    if (destroyRoomResult === 0) {
+      res.send({ status_code: 200, message: "Room deleted successfully" });
+    } else {
+      res.send({ status_code: 200, message: "Room delete failed" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+}
+
+//subscribeRoom
+userHandler.subscribeRoom = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.user = req.body.user;
+    data.nick = req.body.nick;
+    data.room = req.body.room;
+    data.nodes = req.body.nodes;
+    const subscribeRoomResult = await ejabberdService.subscribeRoom(data);
+    console.log(subscribeRoomResult);
+    res.send({ status_code: 200, result: subscribeRoomResult });
+
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+
+};
+
+//getRoomAffiliations
+userHandler.getRoomAffiliations = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    const getRoomAffiliationsResult = await ejabberdService.getRoomAffiliations(data);
+    console.log(getRoomAffiliationsResult);
+    res.send({ status_code: 200, result: getRoomAffiliationsResult });
+
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+
+};
+
+//setRoomAffiliation
+userHandler.setRoomAffiliation = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.name = req.body.name;
+    data.server = req.body.server;
+    data.jid = req.body.jid;
+    data.affiliation = req.body.affiliation;
+    const setRoomAffiliationsResult = await ejabberdService.setRoomAffiliation(data);
+    console.log(setRoomAffiliationsResult);
+    if (setRoomAffiliationsResult === 0) {
+      res.send({ status_code: 200, message: "Affiliation set successfully" });
+    } else {
+      res.send({ status_code: 200, message: "Affiliation set  failed" });
+    }
+
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+
+};
+
+//getRoomOptions
+userHandler.getRoomOptions = async function (req: any, res: any, done: any) {
+  try {
+    let data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    const getRoomOptionsResult = await ejabberdService.getRoomOptions(data);
+    console.log(getRoomOptionsResult);
+    res.send({ status_code: 200, result: getRoomOptionsResult });
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+
+};
 module.exports = userHandler;

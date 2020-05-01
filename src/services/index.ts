@@ -40,43 +40,6 @@ ejabberdService.sendMessage = async function (data: any) {
 //add_rosteritem
 ejabberdService.add_rosteritem = async function (data: any) {
     try {
-        /*"localuser": "user1",
-        "localhost": "myserver.com",
-        "user": "user2",
-        "host": "myserver.com",
-        "nick": "User 2",
-        "group": "Friends",
-        "subs": "both" */
-        /*
-         id: 8238,
-      mobileno: '',
-      ext: 690,
-      caller_id: 'PPC Team',
-      login_user_name: '690@vectone.com',
-      sip_login_id: '2703',
-      tmestmp: '1580820972',
-      user_status: '',
-      email_id: 's.prasanna@vectone.com',
-      status_msg: '',
-      company_id: 1698,
-      direct_no: null,
-      ImageURL: null,
-      first_name: 'PPC',
-      last_name: 'Team',
-      company_name: 'Unifiedring',
-      is_muted: 0,
-      is_blocked: 0,
-      is_favourite: 0,
-      department: 'PPC ',
-      role_name: 'Registered'
-        */
-        const localuser = data.localuser;
-        const localserver = data.localhost;
-        const user = data.user;
-        const server = data.host;
-        const nick = data.nick;
-        const group = data.group;
-        const subs = data.subs;
         return await axios.post('https://im01.unifiedring.co.uk:5443/api/add_rosteritem', data)
             .then((response) => {
                 //console.log(response);
@@ -86,14 +49,197 @@ ejabberdService.add_rosteritem = async function (data: any) {
                 console.log(error);
             });
 
-        /*console.log(client);
-        await client.addRosteritem(localuser, localhost, user, host, nick, group, subs).then((result: any) => {
-            return result;
-        }).catch((err: any) => {
-            console.log(err.response.data);
-        });*/
     } catch (err) {
         console.log(err);
     }
 }
 
+//sendStanza
+ejabberdService.sendStanza = async function (data: any) {
+    try {
+        //client.sendStanza(from, to, stanza)
+        return await client.sendStanza(data.from, data.to, data.stanza).then((result: any) => {
+            return result;
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//create room OR create team
+ejabberdService.createRoom = async function (data: any) {
+    try {
+        //client.createRoom(name, service, host)
+        return await client.createRoom(data.name, data.service, data.host).then((result: any) => {
+            console.log(result);
+            return result;
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//createTeamWithOpts
+ejabberdService.createTeamWithOpts = async function (data: any) {
+    try {
+        //client.createRoomWithOpts(name, service, host, options)
+        return await client.createRoomWithOpts(data.name, data.service, data.host, data.options).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//get_room_options
+ejabberdService.getRoomOptions = async function (data: any) {
+    try {
+        //client.getRoomOptions(name, service)
+        return await client.getRoomOptions(data.name, data.service).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//set_room_affiliation
+ejabberdService.setRoomAffiliation = async function (data: any) {
+    try {
+        //client.setRoomAffiliation(name, server, jid, affiliation)
+        //console.log(data);
+        /*return await client.setRoomAffiliation(data.name, data.service, data.jid, data.affiliation).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err);
+            return err.response;
+
+        });*/
+        let dataArr: any = {};
+        dataArr.name = data.name;
+        dataArr.service = data.service;
+        dataArr.jid = data.jid;
+        dataArr.affiliation = data.affiliation;
+        return await axios.post('https://im01.unifiedring.co.uk:5443/api/set_room_affiliation', dataArr)
+            .then((response) => {
+                //console.log(response);
+                return response;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//get_room_affiliations
+ejabberdService.getRoomAffiliations = async function (data: any) {
+    try {
+        //client.getRoomAffiliations(name, service)
+        return await client.getRoomAffiliations(data.name, data.service).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//subscribe_room
+ejabberdService.subscribeRoom = async function (data: any) {
+    try {
+        //client.subscribeRoom(user, nick, room, nodes)
+        return await client.subscribeRoom(data.user, data.nick, data.room, data.nodes).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//unsubscribe_room
+ejabberdService.unsubscribeRoom = async function (data: any) {
+    try {
+        //client.unsubscribeRoom(user, room)
+        return await client.unsubscribeRoom(data.user, data.room).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//destroy_room
+ejabberdService.destroyRoom = async function (data: any) {
+    try {
+        //client.destroyRoom(name, service)
+        return await client.destroyRoom(data.name, data.service).then((result: any) => {
+            console.log(result);
+            return result;
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+            return err.response.data;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+//send_direct_invitation
+ejabberdService.sendDirectInvitation = async function (data: any) {
+    try {
+        //client.sendDirectInvitation(name, service, password, reason, users)
+        console.log(data);
+        return await client.sendDirectInvitation(data.name, data.service, data.password, data.reason, data.users).then((result: any) => {
+            console.log(result);
+            return result;
+        }).catch((err: any) => {
+            console.log(err);
+            return err.response;
+
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
