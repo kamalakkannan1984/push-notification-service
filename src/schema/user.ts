@@ -141,7 +141,6 @@ user.createTeamReq = {
     type: 'object',
     properties: {
       company_id: { type: 'number' },
-      team_id: { type: 'number' },
       team_name: { type: 'string' },
       team_type: { type: 'number' },
       description: { type: 'string' },
@@ -155,7 +154,7 @@ user.createTeamReq = {
       team_guid: { type: 'string' },
       photo_info: { type: 'string' },
     },
-    required: ['company_id', 'team_id', 'team_name', 'description', 'add_members', 'team_guid'],
+    required: ['company_id', 'team_name', 'description', 'add_members', 'created_by'],
   },
 };
 
@@ -165,7 +164,7 @@ user.createTeamRes = {
     properties: {
       status_code: { type: "number" },
       message: { type: "string" },
-      result: { type: "string" }
+      team_id: { type: "string" }
     }
   },
 };
@@ -274,6 +273,38 @@ user.destroyRoom = {
     required: ['name', 'service'],
   },
 }
+/*TeamLeave */
+/* "name": "room1",
+      "service": "muc.example.com",
+      "jid": "user2@example.com",
+      "affiliation": "member"*/
+user.leaveTeam = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      service: { type: 'string' },
+      jid: { type: 'string' }
+    },
+    required: ['name', 'service', 'jid'],
+  },
+}
+
+//changePassword
+/*"user": "peter",
+      "host": "myserver.com",
+      "newpass": "blank"*/
+user.changePassword = {
+  body: {
+    type: 'object',
+    properties: {
+      userid: { type: 'string' },
+      sipNewPassword: { type: 'string' }
+    },
+    required: ['userid', 'sipNewPassword'],
+  },
+}
+
 /* ############################################################################################################## */
 
 export const userSchema: any = user;

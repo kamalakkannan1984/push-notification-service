@@ -96,6 +96,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       //response: userSchema.createTeamRes
     }
   }
+
+  const optLeaveTeam = {
+    schema: {
+      body: userSchema.leaveTeam.body,
+      //response: userSchema.createTeamRes
+    }
+  }
+
+  const optChangePassword = {
+    schema: {
+      body: userSchema.changePassword.body,
+      //response: userSchema.createTeamRes
+    }
+  }
   fastify.get('/api/status', optStatus, apihandler.getStatus);
   fastify.post('/api/registered_users', opts, apihandler.getRegisteredUsers);
   fastify.post('/api/get_presence', optsGetPresence, apihandler.getPresence);
@@ -112,5 +126,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post('/api/get_room_options', apihandler.getRoomOptions);
   fastify.post('/api/get_room_affiliations', apihandler.getRoomAffiliations);
   fastify.post('/api/destroy_room', optDestroyRoom, apihandler.destroyRoom);
+  fastify.post('/api/leave_team', optLeaveTeam, apihandler.leaveTeam);
+  fastify.post('/api/change_password', optChangePassword, apihandler.changePassword);
   done();
 };

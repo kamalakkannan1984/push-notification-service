@@ -73,13 +73,21 @@ ejabberdService.sendStanza = async function (data: any) {
 ejabberdService.createRoom = async function (data: any) {
     try {
         //client.createRoom(name, service, host)
-        return await client.createRoom(data.name, data.service, data.host).then((result: any) => {
+        /*return await client.createRoom(data.name, data.service, data.host).then((result: any) => {
             console.log(result);
             return result;
         }).catch((err: any) => {
             console.log(err.response.data);
             return err.response.data;
-        });
+        }); */
+        return await axios.post('https://im01.unifiedring.co.uk:5443/api/create_room', data)
+            .then((response) => {
+                //console.log(response);
+                return response;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     } catch (err) {
         console.log(err);
     }
@@ -89,7 +97,7 @@ ejabberdService.createRoom = async function (data: any) {
 ejabberdService.createTeamWithOpts = async function (data: any) {
     try {
         //client.createRoomWithOpts(name, service, host, options)
-        return await client.createRoomWithOpts(data.name, data.service, data.host, data.options).then((result: any) => {
+        /*return await client.createRoomWithOpts(data.name, data.service, data.host, data.options).then((result: any) => {
             console.log(result);
             return result;
 
@@ -97,7 +105,21 @@ ejabberdService.createTeamWithOpts = async function (data: any) {
             console.log(err.response.data);
             return err.response.data;
 
-        });
+        }); */
+        const dataArr: any = {};
+        dataArr.name = data.name;
+        dataArr.service = data.service;
+        dataArr.host = data.host;
+        dataArr.options = data.options;
+        return await axios.post('https://im01.unifiedring.co.uk:5443/api/create_room_with_opts', dataArr)
+            .then((response) => {
+                //console.log(response);
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
     } catch (err) {
         console.log(err);
     }
@@ -124,17 +146,6 @@ ejabberdService.getRoomOptions = async function (data: any) {
 //set_room_affiliation
 ejabberdService.setRoomAffiliation = async function (data: any) {
     try {
-        //client.setRoomAffiliation(name, server, jid, affiliation)
-        //console.log(data);
-        /*return await client.setRoomAffiliation(data.name, data.service, data.jid, data.affiliation).then((result: any) => {
-            console.log(result);
-            return result;
-
-        }).catch((err: any) => {
-            console.log(err);
-            return err.response;
-
-        });*/
         let dataArr: any = {};
         dataArr.name = data.name;
         dataArr.service = data.service;
@@ -142,8 +153,7 @@ ejabberdService.setRoomAffiliation = async function (data: any) {
         dataArr.affiliation = data.affiliation;
         return await axios.post('https://im01.unifiedring.co.uk:5443/api/set_room_affiliation', dataArr)
             .then((response) => {
-                //console.log(response);
-                return response;
+                return response.data;
             })
             .catch((error) => {
                 console.log(error);
@@ -230,7 +240,7 @@ ejabberdService.destroyRoom = async function (data: any) {
 ejabberdService.sendDirectInvitation = async function (data: any) {
     try {
         //client.sendDirectInvitation(name, service, password, reason, users)
-        console.log(data);
+        /*console.log(data);
         return await client.sendDirectInvitation(data.name, data.service, data.password, data.reason, data.users).then((result: any) => {
             console.log(result);
             return result;
@@ -238,7 +248,65 @@ ejabberdService.sendDirectInvitation = async function (data: any) {
             console.log(err);
             return err.response;
 
+        });*/
+
+        let dataArr: any = {};
+        dataArr.name = data.name;
+        dataArr.service = data.service;
+        dataArr.password = data.password;
+        dataArr.reason = data.reason;
+        dataArr.users = data.users;
+        return await axios.post('https://im01.unifiedring.co.uk:5443/api/send_direct_invitation', dataArr)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//changePassword
+ejabberdService.changePassword = async function (data: any) {
+    try {
+        //client.changePassword(user, host, newpass)
+        console.log(data);
+        return await client.changePassword(data.user, data.host, data.newpass).then((result: any) => {
+            console.log(result);
+            return result;
+        }).catch((err: any) => {
+            console.log(err);
+            return err.response;
+
         });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//change_room_option
+ejabberdService.changeRoomOption = async function (data: any) {
+    try {
+        //client.changeRoomOption(name, service, option, value)        
+        /*return await client.changeRoomOption(data.name, data.service, data.option, data.value).then((result: any) => {
+            console.log(result);
+            return result;
+        }).catch((err: any) => {
+            console.log(err);
+            return err.response;
+
+        }); */
+        return await axios.post('https://im01.unifiedring.co.uk:5443/api/change_room_option', data)
+            .then((response) => {
+                console.log(response);
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     } catch (err) {
         console.log(err);
     }

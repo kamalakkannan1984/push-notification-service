@@ -78,7 +78,7 @@ userModel.saveCreateTeam = (data: any) => {
         const request = new sql.Request(pool);
         const dataArr = data;
         request.input('company_id', sql.Int, dataArr.company_id)
-        request.input('team_id', sql.Int, dataArr.team_id)
+        request.input('team_id', sql.Int, 0)
         request.input('team_name', sql.Text, dataArr.team_name)
         request.input('team_type', sql.Int, dataArr.team_type)
         request.input('description', sql.Text, dataArr.description)
@@ -92,6 +92,7 @@ userModel.saveCreateTeam = (data: any) => {
         request.input('add_members', sql.Text, dataArr.add_members)
         request.input('team_guid', sql.Text, dataArr.team_guid)
         request.input('profile_image_url', sql.Text, dataArr.photo_info)
+        request.input('team_id_prefix', sql.Text, 'G')
         //request.input('archived', sql.Text, "")
         //request.input('Delete_image', sql.Text, 'false')
         //request.input('get_image', sql.Text, 'false')
