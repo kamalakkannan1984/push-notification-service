@@ -3,130 +3,147 @@
  * @createdOn 05th Mar 2020
  */
 
-import { userSchema } from '../schema/user';
+import { userSchema } from '../schema/user.schema';
+import { userHandlers } from '../handlers/user.handler';
+
 /**
  * @param {Object} fastify - fastify
  */
 export const configureRoutes = (fastify: any, options: any, done: any) => {
-  const apihandler = require('../handlers/user');
-  const opts = {
+
+  fastify.get('/api/status', {
     schema: {
+      description: "Status api",
+      tags: ["health"],
+      response: userSchema.statusRes
+    }
+  }, userHandlers.getStatus);
+
+  fastify.post('/api/registered_users', {
+    schema: {
+      description: "Get registered users api",
+      tags: ["user"],
       body: userSchema.registeredUsersReq.body,
       response: userSchema.registeredUsersRes,
     },
-  };
+  }, userHandlers.getRegisteredUsers);
 
-  const optsGetPresence = {
+  fastify.post('/api/get_presence', {
     schema: {
+      description: "Get presence status api",
+      tags: ["user"],
       body: userSchema.getPresenceReq.body,
       response: userSchema.getPresenceRes,
     },
-  };
+  }, userHandlers.getPresence);
 
-  const optConnectedUsersNumber = {
+  fastify.get('/api/connected_users', {
     schema: {
-      response: userSchema.connectedUsersNumberRes,
-    },
-  };
-
-  const optConnectedUsers = {
-    schema: {
+      description: "Get connected users api",
+      tags: ["user"],
       response: userSchema.connectedUsersRes,
     },
-  };
+  }, userHandlers.getConnectedUsers);
 
-  const optStatus = {
+  fastify.get('/api/connected_users_number', {
     schema: {
-      response: userSchema.statusRes,
+      description: "Get connected users number api",
+      tags: ["user"],
+      response: userSchema.connectedUsersNumberRes,
     },
-  };
+  }, userHandlers.getConnectedUsersNumber);
 
-  const optRegister = {
+  fastify.post('/api/register', {
     schema: {
+      description: "Register api",
+      tags: ["user"],
       body: userSchema.registerReq.body,
       response: userSchema.registerRes
     }
-  }
+  }, userHandlers.register);
 
-  const optCreateTeam = {
+  fastify.post('/api/create_team', {
     schema: {
+      description: "Create team api",
+      tags: ["team"],
       body: userSchema.createTeamReq.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.createTeam);
 
-  const optCreateTeamWithOpts = {
+  fastify.post('/api/create_room_with_opts', {
     schema: {
+      description: "Create team with options api",
+      tags: ["team"],
       body: userSchema.createTeamWithOptsReq.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.createTeamWithOpts);
 
-  const optUnsubscribeRoom = {
+  fastify.post('/api/unsubscribe_room', {
     schema: {
+      description: "Unsubscribe room or team api",
+      tags: ["team"],
       body: userSchema.unsubscribeRoomReq.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.unsubscribeRoom);
 
-  const optGetTeamInfo = {
+  fastify.post('/api/get_team_info', {
     schema: {
+      description: "Get team info api",
+      tags: ["team"],
       body: userSchema.getTeamInfo.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.getTeamInfo);
 
-  const optSendMessage = {
+  fastify.post('/api/send_message', {
     schema: {
+      description: "Send message api",
+      tags: ["message"],
       body: userSchema.sendMessage.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.sendMessage);
 
-  const optSendStanza = {
+  fastify.post('/api/send_stanza', {
     schema: {
+      description: "Send stanza api",
+      tags: ["message"],
       body: userSchema.sendStanza.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.sendStanza);
 
-  const optDestroyRoom = {
+  fastify.post('/api/get_room_options', userHandlers.getRoomOptions);
+  fastify.post('/api/get_room_affiliations', userHandlers.getRoomAffiliations);
+
+  fastify.post('/api/destroy_room', {
     schema: {
+      description: "Delete team or destroy room api",
+      tags: ["team"],
       body: userSchema.destroyRoom.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.destroyRoom);
 
-  const optLeaveTeam = {
+  fastify.post('/api/leave_team', {
     schema: {
+      description: "Leave team api",
+      tags: ["team"],
       body: userSchema.leaveTeam.body,
       //response: userSchema.createTeamRes
     }
-  }
+  }, userHandlers.leaveTeam);
 
-  const optChangePassword = {
+  fastify.post('/api/change_password', {
     schema: {
+      description: "Change password api",
+      tags: ["user"],
       body: userSchema.changePassword.body,
       //response: userSchema.createTeamRes
     }
-  }
-  fastify.get('/api/status', optStatus, apihandler.getStatus);
-  fastify.post('/api/registered_users', opts, apihandler.getRegisteredUsers);
-  fastify.post('/api/get_presence', optsGetPresence, apihandler.getPresence);
-  fastify.get('/api/connected_users', optConnectedUsers, apihandler.getConnectedUsers);
-  fastify.get('/api/connected_users_number', optConnectedUsersNumber, apihandler.getConnectedUsersNumber);
-  fastify.post('/api/register', optRegister, apihandler.register);
-  fastify.post('/api/create_team', optCreateTeam, apihandler.createTeam);
-  fastify.post('/api/create_room_with_opts', optCreateTeamWithOpts, apihandler.createTeamWithOpts);
-  fastify.post('/api/unsubscribe_room', optUnsubscribeRoom, apihandler.unsubscribeRoom);
-  //.net api
-  fastify.post('/api/get_team_info', optGetTeamInfo, apihandler.getTeamInfo);
-  fastify.post('/api/send_message', optSendMessage, apihandler.sendMessage);
-  fastify.post('/api/send_stanza', optSendStanza, apihandler.sendStanza);
-  fastify.post('/api/get_room_options', apihandler.getRoomOptions);
-  fastify.post('/api/get_room_affiliations', apihandler.getRoomAffiliations);
-  fastify.post('/api/destroy_room', optDestroyRoom, apihandler.destroyRoom);
-  fastify.post('/api/leave_team', optLeaveTeam, apihandler.leaveTeam);
-  fastify.post('/api/change_password', optChangePassword, apihandler.changePassword);
+  }, userHandlers.changePassword);
   done();
 };

@@ -5,7 +5,7 @@
  * @createdOn 05th Mar 2020
  */
 
-import { userSchema } from '../schema/user';
+import { userSchema } from '../schema/user.schema';
 import { userModel } from '../models/user';
 import { ejabberdService } from '../services/index';
 const Client = require('@appunto/ejabberd-api-client');
@@ -468,4 +468,5 @@ userHandler.changePassword = async function (req: any, res: any, done: any) {
   }
 
 };
-module.exports = userHandler;
+
+export const userHandlers: any = userHandler;

@@ -46,6 +46,14 @@ export const config = {
           name: 'user',
           description: 'User related end-points',
         },
+        {
+          name: 'team',
+          description: 'Team related end-points',
+        },
+        {
+          name: 'message',
+          description: 'Message related end-points',
+        },
       ],
     },
   },

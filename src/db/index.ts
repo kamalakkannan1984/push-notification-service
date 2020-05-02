@@ -1,7 +1,6 @@
 
 //var sql = require("mssql");
 import * as sql from "mssql";
-import { request } from "http";
 var sqlConfig = {
     user: 'smepbx',
     password: 'smeswitch',
