@@ -3,7 +3,7 @@ import { Server, IncomingMessage, ServerResponse } from 'http';
 import Ajv from 'ajv';
 import { config } from './config/app';
 import { utils } from './utils/utils';
-import { authHandler } from './handlers/auth';
+import { authHandler } from './handlers/auth.hanlder';
 import { configureRoutes } from './routes';
 
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
@@ -47,14 +47,6 @@ process.on('uncaughtException', err => {
   server.log.error(err);
 });
 
-/*server.listen(3000, (err: any) => {
-  if (err) {
-    console.log('Error: ', err);
-    process.exit(1);
-  }
-  console.log(' Server Started on port - 3000 ');
-}); */
-
 // Run the server!
 const start = async () => {
   try {
@@ -65,4 +57,5 @@ const start = async () => {
     process.exit(1);
   }
 };
+
 start();
