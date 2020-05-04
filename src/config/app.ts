@@ -4,7 +4,8 @@
  */
 
 export const config = {
-  server: {//82.113.74.51
+  server: {
+    //82.113.74.51
     host: process.env.HOST ? process.env.HOST : 'localhost',
     port: process.env.PORT ? process.env.PORT : 5001,
   },
@@ -13,6 +14,9 @@ export const config = {
   basic_uname: process.env.BASIC_UNAME,
   basic_pw: process.env.BASIC_PW,
   apiRoutePrefix: '/api',
+  ejabberdHost: 'im01.unifiedring.co.uk',
+  ejabberdPort: '5443',
+  ejabberdApiPrefix: 'api',
   cors_options: {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
