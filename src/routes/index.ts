@@ -238,7 +238,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.post(
-    'api/user_sessions_info',
+    '/api/user_sessions_info',
     {
       schema: {
         description: 'Get user session or presence information api',
