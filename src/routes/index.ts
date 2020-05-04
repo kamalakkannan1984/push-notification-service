@@ -9,6 +9,8 @@ import { teamSchema } from '../schema/team.schema';
 import { messageSchema } from '../schema/message.schema';
 import { userHandlers } from '../handlers/user.handler';
 import { healthHandlers } from '../handlers/health.handler';
+import { teamHandlers } from '../handlers/team.handler';
+import { messageHandlers } from '../handlers/message.handler';
 
 /**
  * @param {Object} fastify - fastify
@@ -99,7 +101,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.createTeam,
+    teamHandlers.createTeam,
   );
 
   fastify.post(
@@ -112,7 +114,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.createTeamWithOpts,
+    teamHandlers.createTeamWithOpts,
   );
 
   fastify.post(
@@ -125,7 +127,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.unsubscribeRoom,
+    teamHandlers.unsubscribeRoom,
   );
 
   fastify.post(
@@ -138,7 +140,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.getTeamInfo,
+    teamHandlers.getTeamInfo,
   );
 
   fastify.post(
@@ -151,7 +153,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.sendMessage,
+    messageHandlers.sendMessage,
   );
 
   fastify.post(
@@ -164,11 +166,11 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.sendStanza,
+    messageHandlers.sendStanza,
   );
 
-  fastify.post('/api/get_room_options', userHandlers.getRoomOptions);
-  fastify.post('/api/get_room_affiliations', userHandlers.getRoomAffiliations);
+  fastify.post('/api/get_room_options', teamHandlers.getRoomOptions);
+  fastify.post('/api/get_room_affiliations', teamHandlers.getRoomAffiliations);
 
   fastify.post(
     '/api/destroy_room',
@@ -180,7 +182,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.destroyRoom,
+    teamHandlers.destroyRoom,
   );
 
   fastify.post(
@@ -193,7 +195,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         // response: userSchema.createTeamRes
       },
     },
-    userHandlers.leaveTeam,
+    teamHandlers.leaveTeam,
   );
 
   fastify.post(

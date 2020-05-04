@@ -3,11 +3,6 @@
  * @createdOn 05th May 2020
  */
 
-import { userSchema } from '../schema/user.schema';
-import { config } from '../config/app';
-import { userModel } from '../models/user';
-import { ejabberdService } from '../services/index';
-import UserService from '../services/user.service';
 import HealthService from '../services/health.service';
 
 const healthHandler: any = {};

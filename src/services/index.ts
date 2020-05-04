@@ -152,7 +152,7 @@ ejabberdService.getRoomOptions = async function (data: any) {
   }
 };
 
-//set_room_affiliation
+// set_room_affiliation
 ejabberdService.setRoomAffiliation = async function (data: any) {
   try {
     let dataArr: any = {};
