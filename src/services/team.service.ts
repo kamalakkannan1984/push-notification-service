@@ -152,7 +152,7 @@ class Team {
   public subscribeRoom(data: any) {
     return new Promise(async (resolve, reject) => {
       try {
-        //client.subscribeRoom(user, nick, room, nodes)
+        // client.subscribeRoom(user, nick, room, nodes)
         return await this.client
           .subscribeRoom(data.user, data.nick, data.room, data.nodes)
           .then((result: any) => {
@@ -225,6 +225,52 @@ class Team {
       try {
         return await axios
           .post(`https://${this.host}:${this.port}/${this.prefix}/change_room_option`, data)
+          .then((response) => {
+            console.log(response);
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * getUserRooms
+   */
+  public getUserRooms(data: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/get_user_rooms`, data)
+          .then((response) => {
+            console.log(response);
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * userSessionInfo
+   */
+  public userSessionInfo(data: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/get_user_rooms`, data)
           .then((response) => {
             console.log(response);
             resolve(response.data);

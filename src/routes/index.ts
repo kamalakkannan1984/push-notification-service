@@ -199,6 +199,32 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.post(
+    '/api/role_change',
+    {
+      schema: {
+        description: 'Team role change api',
+        tags: ['team'],
+        body: teamSchema.roleChange.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.roleChange,
+  );
+
+  fastify.post(
+    '/api/get_user_rooms',
+    {
+      schema: {
+        description: 'Get user rooms details api',
+        tags: ['team'],
+        body: teamSchema.getUserRooms.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.getUserRooms,
+  );
+
+  fastify.post(
     '/api/change_password',
     {
       schema: {
@@ -209,6 +235,19 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       },
     },
     userHandlers.changePassword,
+  );
+
+  fastify.post(
+    'api/user_sessions_info',
+    {
+      schema: {
+        description: 'Get user session or presence information api',
+        tags: ['user'],
+        body: teamSchema.userSessionInfo.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.userSessionInfo,
   );
   done();
 };

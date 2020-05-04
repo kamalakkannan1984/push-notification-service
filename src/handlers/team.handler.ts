@@ -272,4 +272,55 @@ teamHandler.getRoomOptions = async function (req: any, res: any, done: any) {
   }
 };
 
+// roleChange
+teamHandler.roleChange = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    data.jid = req.body.jid;
+    data.affiliation = req.body.role;
+    const teamService = new TeamService();
+    const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
+    console.log(setRoomAffiliationsResult);
+    if (setRoomAffiliationsResult === 0) {
+      res.send({ status_code: 200, message: 'success' });
+    } else {
+      res.send({ status_code: 200, message: 'failed' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
+// getUserRooms
+teamHandler.getUserRooms = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.user = req.body.userId;
+    data.host = config.ejabberdHost;
+    const teamService = new TeamService();
+    const userRooms = await teamService.getUserRooms(data);
+    res.send({ status_code: 200, result: userRooms });
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
+// userSessionInfo
+teamHandler.userSessionInfo = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.user = req.body.userId;
+    data.host = config.ejabberdHost;
+    const teamService = new TeamService();
+    const userSessionList = await teamService.userSessionInfo(data);
+    res.send({ status_code: 200, result: userSessionList });
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
 export const teamHandlers: any = teamHandler;

@@ -134,4 +134,37 @@ team.leaveTeam = {
   },
 };
 
+team.roleChange = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      service: { type: 'string' },
+      jid: { type: 'string' },
+      role: { type: 'string' },
+    },
+    required: ['name', 'service', 'jid', 'role'],
+  },
+};
+
+team.getUserRooms = {
+  body: {
+    type: 'object',
+    properties: {
+      userId: { type: 'string' },
+    },
+    required: ['userId'],
+  },
+};
+
+team.userSessionInfo = {
+  body: {
+    type: 'object',
+    properties: {
+      userId: { type: 'string' },
+    },
+    required: ['userId'],
+  },
+};
+
 export const teamSchema = team;

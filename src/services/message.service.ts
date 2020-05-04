@@ -26,7 +26,7 @@ class Message {
   public async sendMessage(data: any) {
     return new Promise(async (resolve, reject) => {
       try {
-        //client.sendMessage(type, from, to, subject, body)
+        // client.sendMessage(type, from, to, subject, body)
         return await this.client
           .sendMessage(data.type, data.from, data.to, data.subject, data.body)
           .then((result: any) => {
