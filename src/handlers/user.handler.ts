@@ -161,69 +161,83 @@ userHandler.createTeam = async function (req: any, res: any, done: any) {
     data.add_members = req.body.add_members;
     data.team_guid = req.body.team_guid;
     data.photo_info = req.body.photo_info;
-    const recordsets = await userModel.saveCreateTeam(data);
-    console.log(recordsets);
-    if (recordsets.errcode === 0) {
-      let teamData: any = {};
-      teamData.name = 'con' + recordsets.team_id;
-      teamData.service = "conference.im01.unifiedring.co.uk";
-      teamData.host = "im01.unifiedring.co.uk";
-      teamData.options = [
-        {
-          "name": "members_only",
-          "value": "true"
-        },
-        {
-          "name": "title",
-          "value": data.team_name
-        },
-        {
-          "name": "description",
-          "value": data.description
-        },
-        {
-          "name": "allow_change_subj",
-          "value": "false"
-        },
-        {
-          "name": "public",
-          "value": "false"
-        },
-        {
-          "name": "persistent",
-          "value": "true"
-        },
-        {
-          "name": "anonymous",
-          "value": "false"
-        }
-      ];
-      const createTeamResult = await ejabberdService.createTeamWithOpts(teamData);
-      if (createTeamResult == 0) {
-        let members = data.add_members;
-        let memberArr = members.split(",");
-        let userIdArr = [];
-        for (let i = 0; i < memberArr.length; i++) {
-          teamData.jid = memberArr[i] + "@im01.unifiedring.co.uk";
-          teamData.affiliation = "member";
-          await ejabberdService.setRoomAffiliation(teamData);
+    data.team_id_prefix = 'con';
+    const record = await userModel.getUserById(data.created_by);
+    if (record.length === 1) {
+      const recordsets = await userModel.saveCreateTeam(data);
+      console.log(recordsets);
+      if (recordsets.errcode === 0) {
+        let teamData: any = {};
+        teamData.name = data.team_id_prefix + recordsets.team_id;
+        teamData.service = "conference.im01.unifiedring.co.uk";
+        teamData.host = "im01.unifiedring.co.uk";
+        teamData.options = [
+          {
+            "name": "members_only",
+            "value": "true"
+          },
+          {
+            "name": "title",
+            "value": data.team_name
+          },
+          {
+            "name": "description",
+            "value": data.description
+          },
+          {
+            "name": "allow_change_subj",
+            "value": "false"
+          },
+          {
+            "name": "public",
+            "value": "false"
+          },
+          {
+            "name": "persistent",
+            "value": "true"
+          },
+          {
+            "name": "anonymous",
+            "value": "false"
+          }
+        ];
+        const createTeamResult = await ejabberdService.createTeamWithOpts(teamData);
+        if (createTeamResult == 0) {
+          let members = data.add_members;
+          let memberArr = members.split(",");
+          let userIdArr = [];
+          for (let i = 0; i < memberArr.length; i++) {
+            teamData.jid = memberArr[i] + "@im01.unifiedring.co.uk";
+            teamData.affiliation = "member";
+            await ejabberdService.setRoomAffiliation(teamData);
+            userIdArr.push(teamData.jid);
+          }
+          teamData.jid = data.created_by + "@im01.unifiedring.co.uk";
           userIdArr.push(teamData.jid);
+          teamData.affiliation = "owner";
+          await ejabberdService.setRoomAffiliation(teamData);
+          teamData.password = "";
+          teamData.reason = data.team_name;
+          teamData.users = userIdArr.join(':');
+          await ejabberdService.sendDirectInvitation(teamData);
+
+          const messageData: any = {};
+          messageData.type = "groupchat";
+          messageData.from = data.created_by + "@im01.unifiedring.co.uk";
+          messageData.to = teamData.name + "@" + teamData.service;
+          messageData.subject = "";
+          messageData.body = record[0].caller_id + " created group " + data.team_name;
+          await ejabberdService.sendMessage(messageData);
+          res.send({ status_code: 200, team_id: teamData.name, message: recordsets.errmsg });
+        } else {
+          res.send({ status_code: 200, message: "Team create failed" });
         }
-        teamData.jid = data.created_by + "@im01.unifiedring.co.uk";
-        userIdArr.push(teamData.jid);
-        teamData.affiliation = "owner";
-        await ejabberdService.setRoomAffiliation(teamData);
-        teamData.password = "";
-        teamData.reason = data.team_name;
-        teamData.users = userIdArr.join(':');
-        await ejabberdService.sendDirectInvitation(teamData);
-        res.send({ status_code: 200, team_id: teamData.name, message: recordsets.errmsg });
       } else {
-        res.send({ status_code: 200, message: "Team create failed" });
+        //failed case
+        res.send({ status_code: 404, message: recordsets.errmsg });
       }
     } else {
-      //failed case
-      res.send({ status_code: 404, message: recordsets.errmsg });
+      res.send({ status_code: 404, message: "created_by user not found" });
     }
   } catch (err) {
     console.log("ERROR");

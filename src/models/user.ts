@@ -92,7 +92,7 @@ userModel.saveCreateTeam = (data: any) => {
         request.input('add_members', sql.Text, dataArr.add_members)
         request.input('team_guid', sql.Text, dataArr.team_guid)
         request.input('profile_image_url', sql.Text, dataArr.photo_info)
-        request.input('team_id_prefix', sql.Text, 'G')
+        request.input('team_id_prefix', sql.Text, dataArr.team_id_prefix)
         //request.input('archived', sql.Text, "")
         //request.input('Delete_image', sql.Text, 'false')
         //request.input('get_image', sql.Text, 'false')
@@ -103,6 +103,33 @@ userModel.saveCreateTeam = (data: any) => {
             reject(err);
           }
           resolve(result.recordset[0]);
+        })
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+/*spname: ur_app_get_user_individual_details
+input : @sip_login_id int
+output : login_user_name varchar
+      caller_id varchar
+*/
+userModel.getUserById = (sip_login_id: number) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');;
+      pool.connect().then(() => {
+        const request = new sql.Request(pool);
+        request.input('sip_login_id', sql.Int, sip_login_id)
+        request.execute('ur_app_get_user_individual_details', (err: any, result: any) => {
+          // ... error checks
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(result.recordset);
         })
       });
     } catch (err) {

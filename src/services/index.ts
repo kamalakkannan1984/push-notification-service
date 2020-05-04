@@ -27,9 +27,10 @@ ejabberdService.sendMessage = async function (data: any) {
     try {
         //client.sendMessage(type, from, to, subject, body)
         return await client.sendMessage(data.type, data.from, data.to, data.subject, data.body).then((result: any) => {
+            console.log(result);
             return result;
         }).catch((err: any) => {
-            console.log(err.response.data);
+            console.log(err.response);
             return err.response.data;
         });
     } catch (err) {
