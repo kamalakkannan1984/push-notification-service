@@ -7,11 +7,22 @@ import { userSchema } from '../schema/user.schema';
 import { healthSchema } from '../schema/health.schema';
 import { teamSchema } from '../schema/team.schema';
 import { messageSchema } from '../schema/message.schema';
+
+import { eventSchema } from '../schema/event.schema';
+import { tasksSchema } from '../schema/tasks.schema';
+import { noteSchema } from '../schema/note.schema';
+
 import { userHandlers } from '../handlers/user.handler';
 import { healthHandlers } from '../handlers/health.handler';
 import { teamHandlers } from '../handlers/team.handler';
 import { messageHandlers } from '../handlers/message.handler';
+
+import { eventHandlers } from '../handlers/event.handler';
+import { tasksHandlers } from '../handlers/tasks.handler';
+import { noteHandlers } from '../handlers/note.handler';
+
 const AUTH = 'validateSession';
+
 /**
  * @param {Object} fastify - fastify
  */
@@ -28,6 +39,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     userHandlers.login,
   );
+
   fastify.get(
     '/api/status',
     {
@@ -261,6 +273,123 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       },
     },
     teamHandlers.userSessionInfo,
+  );
+
+  fastify.post(
+    '/api/event',
+    {
+      schema: {
+        description: 'Create event api',
+        tags: ['event'],
+        body: eventSchema.createEvent.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    eventHandlers.createEvent,
+  );
+
+  fastify.put(
+    '/api/event',
+    {
+      schema: {
+        description: 'Update event api',
+        tags: ['event'],
+        body: eventSchema.updateEvent.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    eventHandlers.updateEvent,
+  );
+
+  fastify.delete(
+    '/api/event',
+    {
+      schema: {
+        description: 'Delete event api',
+        tags: ['event'],
+        body: eventSchema.deleteEvent.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    eventHandlers.deleteEvent,
+  );
+
+  fastify.post(
+    '/api/tasks',
+    {
+      schema: {
+        description: 'Create tasks api',
+        tags: ['tasks'],
+        body: tasksSchema.createTasks.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    tasksHandlers.createTasks,
+  );
+
+  fastify.put(
+    '/api/tasks',
+    {
+      schema: {
+        description: 'Update tasks api',
+        tags: ['tasks'],
+        body: tasksSchema.updateTasks.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    tasksHandlers.updateTasks,
+  );
+
+  fastify.delete(
+    '/api/tasks',
+    {
+      schema: {
+        description: 'Delete tasks api',
+        tags: ['tasks'],
+        body: tasksSchema.deleteTasks.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    tasksHandlers.deleteTasks,
+  );
+
+  fastify.post(
+    '/api/note',
+    {
+      schema: {
+        description: 'Create note api',
+        tags: ['note'],
+        body: noteSchema.createNote.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    noteHandlers.createNote,
+  );
+
+  fastify.put(
+    '/api/note',
+    {
+      schema: {
+        description: 'Update note api',
+        tags: ['note'],
+        body: noteSchema.updateNote.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    noteHandlers.updateNote,
+  );
+
+  fastify.delete(
+    '/api/note',
+    {
+      schema: {
+        description: 'Delete note api',
+        tags: ['note'],
+        body: noteSchema.deleteNote.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    noteHandlers.deleteNote,
   );
   done();
 };

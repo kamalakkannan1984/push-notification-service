@@ -58,6 +58,18 @@ export const config = {
           name: 'message',
           description: 'Message related end-points',
         },
+        {
+          name: 'event',
+          description: 'Event related end-points',
+        },
+        {
+          name: 'tasks',
+          description: 'Tasks related end-points',
+        },
+        {
+          name: 'note',
+          description: 'Note related end-points',
+        },
       ],
     },
   },
