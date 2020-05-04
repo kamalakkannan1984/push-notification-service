@@ -5,9 +5,9 @@
 import { config } from '../config/app';
 export const authHandler: any = {};
 
-//validate Basic auth for public apis
+// validate Basic auth for public apis
 authHandler.validate = (username: string, password: string, req: any, reply: any, done: any) => {
-  username == config.basic_uname && password == config.basic_pw
+  username === config.basic_uname && password === config.basic_pw
     ? done()
     : done(new Error('Authorization token is required'));
 };

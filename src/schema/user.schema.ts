@@ -7,6 +7,28 @@ const user: any = {};
 
 /* ##################################################################################### */
 
+// login
+user.loginReq = {
+  body: {
+    type: 'object',
+    properties: {
+      username: { type: 'string' },
+      password: { type: 'string' },
+    },
+    required: ['host'],
+  },
+};
+
+user.loginRes = {
+  200: {
+    type: 'object',
+    properties: {
+      status_code: { type: 'number' },
+      message: { type: 'string' },
+      token: { type: 'string' },
+    },
+  },
+};
 // registered_users
 user.registeredUsersReq = {
   body: {

@@ -1,23 +1,23 @@
 /**
  * @createdBy Kamal
- * @createdOn 05 Jan 2020
+ * @createdOn 05 May 2020
  */
-import Ajv from 'ajv';
-import { userSchema } from '../schema/user';
 
+import * as jwt from 'jsonwebtoken';
+import { config } from '../config/app';
 
 export const utils: any = {};
-//form  post req data
+// form  post req data
 utils.formReqData = (req: any, reply: any, done: any) => {
   done();
 };
 
-//process response Object
+// process response Object
 utils.formResData = (req: any, reply: any, done: any) => {
   done();
 };
 
-//process error object
+// process error object
 utils.handleError = (req: any, reply: any, error: any, done: any) => {
   console.log('error', error);
   done();
@@ -26,9 +26,8 @@ utils.handleError = (req: any, reply: any, error: any, done: any) => {
 /**
  * @param {Object} data - data to  form the response
  */
-
 utils.formSuccessObject = (statusCode: any, message: any, data: any) => {
-  let succssObj: any = {
+  const succssObj: any = {
     statusCode: statusCode ? statusCode : 200,
     message: message ? message : 'Success',
   };
@@ -51,7 +50,7 @@ utils.formErrorObject = (statusCode: any, message: any, err: any) => {
   };
 
   if (err) {
-    errorObj['err'] = err; //error object contains actual error details
+    errorObj['err'] = err; // error object contains actual error details
   }
   console.log('errorObj', errorObj);
 
@@ -59,8 +58,10 @@ utils.formErrorObject = (statusCode: any, message: any, err: any) => {
 };
 //
 utils.isObject = (val: any) => {
-  if (val === null) { return false; }
-  return ((val && val !== null && val !== 'undefined'));
+  if (val === null) {
+    return false;
+  }
+  return val && val !== null && val !== 'undefined';
 };
 
 utils.dateDiffSec = (val: any) => {
@@ -69,4 +70,28 @@ utils.dateDiffSec = (val: any) => {
   const diffTime = Math.abs(date2 - date1);
   return Math.ceil(diffTime / (1000 * 60));
 };
+
+utils.createSession = (username: string, password: string) => {
+  return generateToken(username, password);
+};
+
+utils.validateSession = (token: string) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const decode = jwt.verify(token, config.jwt_secret);
+      resolve(decode);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+function generateToken(username: string, password: string) {
+  const jwtPayload = {
+    username,
+    password,
+  };
+
+  return jwt.sign(jwtPayload, config.jwt_secret);
+}
 //

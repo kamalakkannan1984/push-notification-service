@@ -11,14 +11,27 @@ import { userHandlers } from '../handlers/user.handler';
 import { healthHandlers } from '../handlers/health.handler';
 import { teamHandlers } from '../handlers/team.handler';
 import { messageHandlers } from '../handlers/message.handler';
-
+const AUTH = 'validateSession';
 /**
  * @param {Object} fastify - fastify
  */
 export const configureRoutes = (fastify: any, options: any, done: any) => {
+  fastify.post(
+    '/api/login',
+    {
+      schema: {
+        description: 'Login api',
+        tags: ['user'],
+        body: userSchema.loginReq.body,
+        response: userSchema.loginRes,
+      },
+    },
+    userHandlers.login,
+  );
   fastify.get(
     '/api/status',
     {
+      auth: AUTH,
       schema: {
         description: 'Status api',
         tags: ['health'],

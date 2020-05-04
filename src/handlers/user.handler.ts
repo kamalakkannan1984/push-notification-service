@@ -9,6 +9,23 @@ import UserService from '../services/user.service';
 
 const userHandler: any = {};
 
+userHandler.login = async function (req: any, res: any, done: any) {
+  try {
+    const loginData: any = {};
+    loginData.username = req.body.username;
+    loginData.password = req.body.password;
+    const loginResult = await userModel.login(loginData);
+    if (loginResult.status === 1) {
+      res.send({ status_code: 200, message: 'login success', token: loginResult.token });
+    } else {
+      res.send({ status_code: 200, message: 'login faild' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
 userHandler.getRegisteredUsers = async function (req: any, res: any, done: any) {
   try {
     const userService = new UserService();
