@@ -6,10 +6,11 @@
 export const tasksModel: any = {};
 
 // create tasks
-tasksModel.createTasks = (data: any) => {
+tasksModel.createTasks = (data: any, tasksCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      const res = await tasksCollection.insertOne(data);
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);
@@ -30,10 +31,12 @@ tasksModel.updateTasks = (data: any) => {
 };
 
 // delete tasks
-tasksModel.deleteTasks = (data: any) => {
+tasksModel.deleteTasks = (data: any, tastsCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('delete tasks');
+      const deleteItem = tastsCollection.deleteMany(data);
+      resolve(deleteItem);
     } catch (err) {
       console.log(err);
       reject(err);

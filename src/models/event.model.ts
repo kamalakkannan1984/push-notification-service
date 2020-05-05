@@ -31,10 +31,12 @@ eventModel.updateEvent = (data: any) => {
 };
 
 // delete event
-eventModel.deleteEvent = (data: any) => {
+eventModel.deleteEvent = (data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('delete event');
+      const deleteItem = eventCollection.deleteMany(data);
+      resolve(deleteItem);
     } catch (err) {
       console.log(err);
       reject(err);

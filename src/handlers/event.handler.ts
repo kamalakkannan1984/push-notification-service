@@ -53,7 +53,7 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
     stanzaData.from = data.OWNERID;
     stanzaData.to = data.RECEIVER;
     const chatType = data.GROUPID ? 'groupchat' : 'chat';
-    //stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from = '${data.OWNERID}' to = '${data.RECEIVER}'> <body>${data.DESCRIPTION}</body> <markable xmlns = 'urn:xmpp:chat-markers:0' /><origin-id id = '${data.MSGID}' xmlns = 'urn:xmpp:sid:0' /> <message-type value = 'TEXT' xmlns = 'urn:xmpp:message-correct:0' /> <thread parent='' >${data.THREAD_ID} < /thread><active xmlns='http:/ / jabber.org / protocol / chatstates'/></message>`;
+    // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from = '${data.OWNERID}' to = '${data.RECEIVER}'> <body>${data.DESCRIPTION}</body> <markable xmlns = 'urn:xmpp:chat-markers:0' /><origin-id id = '${data.MSGID}' xmlns = 'urn:xmpp:sid:0' /> <message-type value = 'TEXT' xmlns = 'urn:xmpp:message-correct:0' /> <thread parent='' >${data.THREAD_ID} < /thread><active xmlns='http:/ / jabber.org / protocol / chatstates'/></message>`;
     stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     await eventModel.createEvent(data, eventCollection);
@@ -96,11 +96,14 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
  *
  * @param {Object} req - request object
  * @param {Object} reply - response object
- * @description - delete event function
+ * @description - delete event function DeleteEventbyUID
  */
 eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
   try {
-    await eventModel.deleteEvent();
+    const data: any = {};
+    data.UID = req.body.uid;
+    const eventCollection = await this.mongo.MONGO1.db.collection('event');
+    await eventModel.deleteEvent(data, eventCollection);
     res.send({ status_code: 200, message: 'success' });
   } catch (err) {
     console.log(err);

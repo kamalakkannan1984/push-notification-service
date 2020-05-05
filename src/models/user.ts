@@ -23,6 +23,7 @@ userModel.login = (data: any) => {
     }
   });
 };
+
 /**
  * @param {String} userName - where codition to fetch data
  */
