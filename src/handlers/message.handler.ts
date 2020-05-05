@@ -37,8 +37,8 @@ messageHandler.sendStanza = async function (req: any, res: any, done: any) {
     data.from = req.body.from;
     data.to = req.body.to;
     data.stanza = req.body.stanza;
-    const messageSerevice = new MessageService();
-    const sendMessageResult = await messageSerevice.sendStanza(data);
+    const messageService = new MessageService();
+    const sendMessageResult = await messageService.sendStanza(data);
     console.log(sendMessageResult);
     if (sendMessageResult === 0) {
       res.send({ status_code: 200, message: 'Message sent successfully' });

@@ -1,5 +1,6 @@
 import fastify from 'fastify';
 import { Server, IncomingMessage, ServerResponse } from 'http';
+import fastify_mongodb from 'fastify-mongodb';
 import Ajv from 'ajv';
 import { config } from './config/app';
 import { utils } from './utils/utils';
@@ -16,6 +17,10 @@ server.register(require('fastify-cors'), config.cors_options);
 
 // mongoDb connection
 // mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring
+server.register(fastify_mongodb, {
+  url: 'mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring',
+  name: 'MONGO1',
+});
 
 // add hooks with relevant handlers
 server.addHook('preHandler', utils.formReqData);

@@ -270,7 +270,7 @@ class Team {
     return new Promise(async (resolve, reject) => {
       try {
         return await axios
-          .post(`https://${this.host}:${this.port}/${this.prefix}/get_user_rooms`, data)
+          .post(`https://${this.host}:${this.port}/${this.prefix}/user_sessions_info`, data)
           .then((response) => {
             console.log(response);
             resolve(response.data);

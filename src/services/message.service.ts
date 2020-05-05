@@ -57,7 +57,7 @@ class Message {
             resolve(result);
           })
           .catch((err: any) => {
-            console.log(err.response.data);
+            console.log(err);
             reject(err.response.data);
           });
       } catch (err) {

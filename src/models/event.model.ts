@@ -6,10 +6,11 @@
 export const eventModel: any = {};
 
 // create event
-eventModel.createEvent = (data: any) => {
+eventModel.createEvent = (data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      const res = await eventCollection.insertOne(data);
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);
