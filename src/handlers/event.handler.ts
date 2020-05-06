@@ -66,7 +66,6 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
     } else {
       res.send({ status_code: 200, message: 'Event sent failed' });
     }
-    res.send({ status_code: 200, message: 'success' });
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
@@ -101,10 +100,14 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
 eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.UID = req.body.uid;
+    data.UID = req.params.uid;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
-    await eventModel.deleteEvent(data, eventCollection);
-    res.send({ status_code: 200, message: 'success' });
+    const deleteRes = await eventModel.deleteEvent(data, eventCollection);
+    if (deleteRes.deletedCount > 0) {
+      res.send({ status_code: 200, message: 'Event deleted successfully' });
+    } else {
+      res.send({ status_code: 200, message: 'Event delete failed' });
+    }
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });

@@ -15,7 +15,7 @@ user.loginReq = {
       username: { type: 'string' },
       password: { type: 'string' },
     },
-    required: ['host'],
+    required: ['username', 'password'],
   },
 };
 

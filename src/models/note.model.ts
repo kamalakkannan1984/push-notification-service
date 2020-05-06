@@ -6,10 +6,11 @@
 export const noteModel: any = {};
 
 // create note
-noteModel.createNote = (data: any) => {
+noteModel.createNote = (data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      const res = await noteCollection.insertOne(data);
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);
@@ -30,10 +31,12 @@ noteModel.updateNote = (data: any) => {
 };
 
 // delete note
-noteModel.deleteNote = (data: any) => {
+noteModel.deleteNote = (data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('delete note');
+      const deleteItem = noteCollection.deleteMany(data);
+      resolve(deleteItem);
     } catch (err) {
       console.log(err);
       reject(err);

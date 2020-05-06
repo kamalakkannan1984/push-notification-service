@@ -43,13 +43,13 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.get(
     '/api/status',
     {
-      auth: AUTH,
       schema: {
         description: 'Status api',
         tags: ['health'],
         response: healthSchema.statusRes,
       },
     },
+    //fastify.auth([fastify[AUTH]]),
     healthHandlers.getStatus,
   );
 
@@ -289,11 +289,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.put(
-    '/api/event',
+    '/api/event/:uid',
     {
       schema: {
         description: 'Update event api',
         tags: ['event'],
+        params: eventSchema.updateEvent.params,
         body: eventSchema.updateEvent.body,
         // response: userSchema.createTeamRes
       },
@@ -302,12 +303,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.delete(
-    '/api/event',
+    '/api/event/:uid',
     {
       schema: {
         description: 'Delete event api',
         tags: ['event'],
-        body: eventSchema.deleteEvent.body,
+        params: eventSchema.deleteEvent.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -328,11 +329,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.put(
-    '/api/tasks',
+    '/api/tasks/:uid',
     {
       schema: {
         description: 'Update tasks api',
         tags: ['tasks'],
+        params: tasksSchema.updateTasks.params,
         body: tasksSchema.updateTasks.body,
         // response: userSchema.createTeamRes
       },
@@ -341,12 +343,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.delete(
-    '/api/tasks',
+    '/api/tasks/:uid',
     {
       schema: {
         description: 'Delete tasks api',
         tags: ['tasks'],
-        body: tasksSchema.deleteTasks.body,
+        params: tasksSchema.deleteTasks.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -367,11 +369,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.put(
-    '/api/note',
+    '/api/note/:uid',
     {
       schema: {
         description: 'Update note api',
         tags: ['note'],
+        params: noteSchema.updateNote.params,
         body: noteSchema.updateNote.body,
         // response: userSchema.createTeamRes
       },
@@ -380,12 +383,12 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.delete(
-    '/api/note',
+    '/api/note/:uid',
     {
       schema: {
         description: 'Delete note api',
         tags: ['note'],
-        body: noteSchema.deleteNote.body,
+        params: noteSchema.deleteNote.params,
         // response: userSchema.createTeamRes
       },
     },

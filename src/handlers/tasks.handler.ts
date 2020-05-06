@@ -54,7 +54,7 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     const chatType = data.GROUPID ? 'groupchat' : 'chat';
     // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from = '${data.OWNERID}' to = '${data.RECEIVER}'> <body>${data.DESCRIPTION}</body> <markable xmlns = 'urn:xmpp:chat-markers:0' /><origin-id id = '${data.MSGID}' xmlns = 'urn:xmpp:sid:0' /> <message-type value = 'TEXT' xmlns = 'urn:xmpp:message-correct:0' /> <thread parent='' >${data.THREAD_ID} < /thread><active xmlns='http:/ / jabber.org / protocol / chatstates'/></message>`;
     stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
-    const tasksCollection = await this.mongo.MONGO1.db.collection('tasks');
+    const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     await tasksModel.createTasks(data, tasksCollection);
     console.log(stanzaData);
     const messageService = new MessageService();
@@ -65,7 +65,6 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     } else {
       res.send({ status_code: 200, message: 'Tasks sent failed' });
     }
-    res.send({ status_code: 200, message: 'success' });
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
@@ -100,10 +99,14 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
 tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.UID = req.body.uid;
-    const tasksCollection = await this.mongo.MONGO1.db.collection('tasks');
-    await tasksModel.deleteTasks(data, tasksCollection);
-    res.send({ status_code: 200, message: 'success' });
+    data.UID = req.params.uid;
+    const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
+    const deleteRes = await tasksModel.deleteTasks(data, tasksCollection);
+    if (deleteRes.deletedCount > 0) {
+      res.send({ status_code: 200, message: 'Task deleted successfully' });
+    } else {
+      res.send({ status_code: 200, message: 'Task delete failed' });
+    }
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
