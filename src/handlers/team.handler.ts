@@ -98,7 +98,7 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
           await messageService.sendDirectInvitation(teamData);
 
           const messageData: any = {};
-          messageData.type = 'groupchat';
+          messageData.type = 'chat';
           messageData.from = data.created_by + '@im01.unifiedring.co.uk';
           messageData.to = teamData.name + '@' + teamData.service;
           messageData.subject = '';
@@ -113,7 +113,7 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
         res.send({ status_code: 404, message: recordsets.errmsg });
       }
     } else {
-      res.send({ status_code: 404, message: 'created_by user not found' });
+      res.send({ status_code: 404, message: 'User not found' });
     }
   } catch (err) {
     console.log('ERROR');
@@ -242,13 +242,25 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
     data.service = req.body.service;
     data.jid = req.body.jid;
     data.affiliation = 'none';
+    const messageService = new MessageService();
     const teamService = new TeamService();
-    const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
-    console.log(setRoomAffiliationsResult);
-    if (setRoomAffiliationsResult === 0) {
-      res.send({ status_code: 200, message: 'success' });
+    const record = await userModel.getUserById(data.created_by);
+    if (record.length === 1) {
+      const messageData: any = {};
+      messageData.type = 'chat';
+      messageData.from = data.jid;
+      messageData.to = data.name + '@' + data.service;
+      messageData.subject = '';
+      messageData.body = record[0].caller_id + ' left';
+      await messageService.sendMessage(messageData);
+      const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
+      if (setRoomAffiliationsResult === 0) {
+        res.send({ status_code: 200, message: 'User left successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'User left failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'failed' });
+      res.send({ status_code: 404, message: 'User not found' });
     }
   } catch (err) {
     console.log(err);
@@ -298,10 +310,16 @@ teamHandler.roleChange = async function (req: any, res: any, done: any) {
 teamHandler.getUserRooms = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
+    let userRooms: any = {};
     data.user = req.body.userId;
     data.host = config.ejabberdHost;
     const teamService = new TeamService();
-    const userRooms = await teamService.getUserRooms(data);
+    userRooms = await teamService.getUserRooms(data);
+    /*for(let i=0; i < userRooms.length; i++){
+      const data: any = {};
+    data.name = req.body.name;
+    data.service = req.body.service;
+    }*/
     res.send({ status_code: 200, result: userRooms });
   } catch (err) {
     console.log(err);
