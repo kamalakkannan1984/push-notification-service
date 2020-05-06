@@ -19,10 +19,12 @@ eventModel.createEvent = (data: any, eventCollection: any) => {
 };
 
 // update event
-eventModel.updateEvent = (data: any) => {
+eventModel.updateEvent = (uid: string, data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('update Event');
+      const res = await eventCollection.updateOne({ UID: uid }, { $set: data });
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);

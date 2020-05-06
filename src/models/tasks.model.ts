@@ -19,10 +19,12 @@ tasksModel.createTasks = (data: any, tasksCollection: any) => {
 };
 
 // update tasks
-tasksModel.updateTasks = (data: any) => {
+tasksModel.updateTasks = (uid: string, data: any, tasksCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('update tasks');
+      const res = await tasksCollection.updateOne({ UID: uid }, { $set: data });
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);

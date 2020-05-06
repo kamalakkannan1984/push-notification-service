@@ -19,10 +19,12 @@ noteModel.createNote = (data: any, noteCollection: any) => {
 };
 
 // update note
-noteModel.updateNote = (data: any) => {
+noteModel.updateNote = (uid: string, data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      resolve();
+      console.log('update note');
+      const res = await noteCollection.updateOne({ UID: uid }, { $set: data });
+      resolve(res);
     } catch (err) {
       console.log(err);
       reject(err);

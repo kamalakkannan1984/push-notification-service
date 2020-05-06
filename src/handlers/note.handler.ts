@@ -54,11 +54,33 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
  */
 noteHandler.updateNote = async function (req: any, res: any, done: any) {
   try {
+    //
+    const uid = req.params.uid;
+    const data: any = {};
+    data.DESCRIPTION = req.body.description;
+    data.SUMMARY = req.body.summary;
+    data.DTSTART = req.body.dtStart;
+    data.SENDER = req.body.sender;
+    data.MSGID = req.body.msgId;
+    data.RECEIVER = req.body.receiver;
+    data.GROUPID = req.body.groupId;
+    data.OWNERID = req.body.ownerId;
+    const chatType = data.GROUPID ? 'groupchat' : 'chat';
     const stanzaData: any = {};
-    await noteModel.updateNote();
+    stanzaData.from = data.OWNERID;
+    stanzaData.to = data.RECEIVER;
+    const noteCollection = await this.mongo.MONGO1.db.collection('Note');
+    await noteModel.updateNote(uid, data, noteCollection);
+    data.THREAD_ID = '';
+    stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
     const messageService = new MessageService();
-    await messageService.sendStanza(stanzaData);
-    res.send({ status_code: 200, message: 'success' });
+    const sendMessageResult = await messageService.sendStanza(stanzaData);
+    if (sendMessageResult === 0) {
+      res.send({ status_code: 200, message: 'Note sent successfully' });
+    } else {
+      res.send({ status_code: 200, message: 'Note sent failed' });
+    }
+    //    
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
