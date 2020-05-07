@@ -16,7 +16,7 @@ userHandler.login = async function (req: any, res: any, done: any) {
     loginData.password = req.body.password;
     const loginResult = await userModel.login(loginData);
     if (loginResult.status === 1) {
-      res.send({ status_code: 200, message: 'login success', token: loginResult.token });
+      res.send({ status_code: 200, message: 'login success', authorization: loginResult.token });
     } else {
       res.send({ status_code: 200, message: 'login faild' });
     }

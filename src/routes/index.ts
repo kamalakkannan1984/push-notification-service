@@ -43,19 +43,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.get(
     '/api/status',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Status api',
         tags: ['health'],
         response: healthSchema.statusRes,
       },
     },
-    //fastify.auth([fastify[AUTH]]),
     healthHandlers.getStatus,
   );
 
   fastify.get(
     '/api/registered_users',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get registered users api',
         tags: ['user'],
@@ -69,6 +70,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/get_presence',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get presence status api',
         tags: ['user'],
@@ -82,6 +84,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.get(
     '/api/connected_users',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get connected users api',
         tags: ['user'],
@@ -94,6 +97,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.get(
     '/api/connected_users_number',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get connected users number api',
         tags: ['user'],
@@ -106,6 +110,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/register',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Register api',
         tags: ['user'],
@@ -119,6 +124,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/create_team',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Create team api',
         tags: ['team'],
@@ -132,6 +138,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/create_room_with_opts',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Create team with options api',
         tags: ['team'],
@@ -145,6 +152,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/unsubscribe_room',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Unsubscribe room or team api',
         tags: ['team'],
@@ -158,6 +166,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/get_team_info',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get team info api',
         tags: ['team'],
@@ -171,6 +180,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/send_message',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Send message api',
         tags: ['message'],
@@ -184,6 +194,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/send_stanza',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Send stanza api',
         tags: ['message'],
@@ -200,6 +211,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/delete_team',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete team or destroy room api',
         tags: ['team'],
@@ -213,6 +225,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/leave_team',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Leave team api',
         tags: ['team'],
@@ -226,6 +239,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/role_change',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Team role change api',
         tags: ['team'],
@@ -239,6 +253,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/get_user_rooms',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get user rooms details api',
         tags: ['team'],
@@ -252,6 +267,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/change_password',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Change password api',
         tags: ['user'],
@@ -265,6 +281,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/user_sessions_info',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Get user session or presence information api',
         tags: ['user'],
@@ -278,6 +295,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/event',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Create event api',
         tags: ['event'],
@@ -291,6 +309,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.put(
     '/api/event/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Update event api',
         tags: ['event'],
@@ -305,6 +324,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.delete(
     '/api/event/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete event api',
         tags: ['event'],
@@ -318,6 +338,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/tasks',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Create tasks api',
         tags: ['tasks'],
@@ -331,6 +352,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.put(
     '/api/tasks/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Update tasks api',
         tags: ['tasks'],
@@ -345,6 +367,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.delete(
     '/api/tasks/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete tasks api',
         tags: ['tasks'],
@@ -358,6 +381,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post(
     '/api/note',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Create note api',
         tags: ['note'],
@@ -371,6 +395,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.put(
     '/api/note/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Update note api',
         tags: ['note'],
@@ -385,6 +410,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.delete(
     '/api/note/:uid',
     {
+      preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete note api',
         tags: ['note'],

@@ -17,10 +17,10 @@ server.register(require('fastify-cors'), config.cors_options);
 
 // mongoDb connection
 // mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring
-server.register(fastify_mongodb, {
+/*server.register(fastify_mongodb, {
   url: 'mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring',
   name: 'MONGO1',
-});
+}); */
 
 // add hooks with relevant handlers
 server.addHook('preHandler', utils.formReqData);
