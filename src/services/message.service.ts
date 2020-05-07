@@ -93,6 +93,94 @@ class Message {
       }
     });
   }
+
+  /**
+   * deleteOldMessage
+   */
+  public deleteOldMessage(data: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/delete_old_messages`, data)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * deleteOldMamMessage
+   */
+  public deleteOldMamMessage(data: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/delete_old_mam_messages`, data)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * deleteExpiredMessage
+   */
+  public deleteExpiredMessage() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/delete_expired_messages`, {})
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * clearCache
+   */
+  public clearCache() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/clear_cache`, {})
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
 }
 
 export default Message;

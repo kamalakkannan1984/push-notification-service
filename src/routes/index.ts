@@ -420,5 +420,65 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     noteHandlers.deleteNote,
   );
+  //old message delete
+  /*- "delete_old_messages"
+      - "delete_old_mam_messages"
+      - "delete_expired_messages"
+      - "clear_cache" */
+  fastify.post(
+    '/api/delete_old_messages',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Delete offline messages older than DAYS',
+        tags: ['message'],
+        //params: noteSchema.deleteNote.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    messageHandlers.deleteOldMessage,
+  );
+
+  fastify.post(
+    '/api/delete_old_mam_messages',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Delete MAM messages older than DAYS',
+        tags: ['message'],
+        //params: noteSchema.deleteNote.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    messageHandlers.deleteOldMamMessage,
+  );
+
+  fastify.get(
+    '/api/delete_expired_messages',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Delete expired offline messages from database',
+        tags: ['message'],
+        //params: noteSchema.deleteNote.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    messageHandlers.deleteExpiredMessage,
+  );
+
+  fastify.get(
+    '/api/clear_cache',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Clear database cache on all nodes',
+        tags: ['message'],
+        //params: noteSchema.deleteNote.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    messageHandlers.clearCache,
+  );
   done();
 };

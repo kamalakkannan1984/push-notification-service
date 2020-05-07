@@ -25,7 +25,7 @@ user.loginRes = {
     properties: {
       status_code: { type: 'number' },
       message: { type: 'string' },
-      token: { type: 'string' },
+      authorization: { type: 'string' },
     },
   },
 };
@@ -116,11 +116,6 @@ user.connectedUsersRes = {
 };
 
 // register
-/*
-'user': 'bob',
-'host': 'example.com',
-'password': 'SomEPass44'
-*/
 user.registerReq = {
   body: {
     type: 'object',
@@ -145,9 +140,6 @@ user.registerRes = {
 };
 
 // changePassword
-/*'user': 'peter',
-      'host': 'myserver.com',
-      'newpass': 'blank'*/
 user.changePassword = {
   body: {
     type: 'object',
