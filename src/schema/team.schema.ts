@@ -113,15 +113,13 @@ team.destroyRoom = {
     properties: {
       name: { type: 'string' },
       service: { type: 'string' },
+      company_id: { type: 'number' }
     },
-    required: ['name', 'service'],
+    required: ['name', 'service', 'company_id'],
   },
 };
+
 /*TeamLeave */
-/* 'name': 'room1',
-            'service': 'muc.example.com',
-            'jid': 'user2@example.com',
-            'affiliation': 'member'*/
 team.leaveTeam = {
   body: {
     type: 'object',
@@ -129,8 +127,10 @@ team.leaveTeam = {
       name: { type: 'string' },
       service: { type: 'string' },
       jid: { type: 'string' },
+      company_id: { type: 'number' },
+      extension: { type: 'number' }
     },
-    required: ['name', 'service', 'jid'],
+    required: ['name', 'service', 'jid', 'company_id', 'extension'],
   },
 };
 

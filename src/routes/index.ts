@@ -198,7 +198,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   fastify.post('/api/get_room_affiliations', teamHandlers.getRoomAffiliations);
 
   fastify.post(
-    '/api/destroy_room',
+    '/api/delete_team',
     {
       schema: {
         description: 'Delete team or destroy room api',

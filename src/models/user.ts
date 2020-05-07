@@ -155,4 +155,53 @@ userModel.getUserById = (sip_login_id: number) => {
     }
   });
 };
+
+//leave team
+userModel.leaveTeam = (data: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
+      pool.connect().then(() => {
+        const request = new sql.Request(pool);
+        request.input('company_id', sql.Int, data.company_id);
+        request.input('extension', sql.Int, data.extension);
+        request.input('team', sql.Text, data.team);
+        request.execute('ur_app_leave_team', (err: any, result: any) => {
+          // ... error checks
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(result.recordset);
+        });
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+//delete team
+userModel.deleteTeam = (data: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
+      pool.connect().then(() => {
+        const request = new sql.Request(pool);
+        request.input('company_id', sql.Int, data.company_id);
+        request.input('team', sql.Text, data.team);
+        request.execute('ur_app_delete_team', (err: any, result: any) => {
+          // ... error checks
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(result.recordset);
+        });
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 //module.exports = userModel;

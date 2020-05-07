@@ -103,7 +103,9 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
           messageData.to = teamData.name + '@' + teamData.service;
           messageData.subject = '';
           messageData.body = record[0].caller_id + ' created group ' + data.team_name;
-          await messageService.sendMessage(messageData);
+          console.log(messageData);
+          const resl = await messageService.sendMessage(messageData);
+          console.log(resl);
           res.send({ status_code: 200, team_id: teamData.name, message: recordsets.errmsg });
         } else {
           res.send({ status_code: 200, message: 'Team create failed' });
@@ -186,13 +188,25 @@ teamHandler.destroyRoom = async function (req: any, res: any, done: any) {
     const data: any = {};
     data.name = req.body.name;
     data.service = req.body.service;
-    const teamService = new TeamService();
-    const destroyRoomResult = await teamService.destroyRoom(data);
-    console.log(destroyRoomResult);
-    if (destroyRoomResult === 0) {
-      res.send({ status_code: 200, message: 'Room deleted successfully' });
+    data.company_id = req.body.company_id;
+    const team = data.name.match(/\d+/g);
+    if (team !== null) {
+      data.team = team[0];
+      const resTeam = await userModel.deleteTeam(data);
+      if (resTeam[0].errcode === 0) {
+        const teamService = new TeamService();
+        const destroyRoomResult = await teamService.destroyRoom(data);
+        console.log(destroyRoomResult);
+        if (destroyRoomResult === 0) {
+          res.send({ status_code: 200, message: 'Team deleted successfully' });
+        } else {
+          res.send({ status_code: 200, message: 'Team delete failed' });
+        }
+      } else {
+        res.send({ status_code: 404, message: 'Team not found' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Room delete failed' });
+      res.send({ status_code: 404, message: 'Team not found' });
     }
   } catch (err) {
     console.log(err);
@@ -242,9 +256,12 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
     data.service = req.body.service;
     data.jid = req.body.jid;
     data.affiliation = 'none';
+    data.company_id = req.body.company_id;
+    data.extension = req.body.extension;
     const messageService = new MessageService();
     const teamService = new TeamService();
-    const record = await userModel.getUserById(data.created_by);
+    const teamMember = data.jid.split('@');
+    const record = await userModel.getUserById(teamMember[0]);
     if (record.length === 1) {
       const messageData: any = {};
       messageData.type = 'chat';
@@ -252,12 +269,23 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
       messageData.to = data.name + '@' + data.service;
       messageData.subject = '';
       messageData.body = record[0].caller_id + ' left';
-      await messageService.sendMessage(messageData);
-      const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
-      if (setRoomAffiliationsResult === 0) {
-        res.send({ status_code: 200, message: 'User left successfully' });
+      const team = data.name.match(/\d+/g);
+      if (team !== null) {
+        data.team = team[0];
+        const resTeam = await userModel.leaveTeam(data);
+        if (resTeam[0].errcode !== -1) {
+          await messageService.sendMessage(messageData);
+          const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
+          if (setRoomAffiliationsResult === 0) {
+            res.send({ status_code: 200, message: 'User left successfully' });
+          } else {
+            res.send({ status_code: 200, message: 'User left failed' });
+          }
+        } else {
+          res.send({ status_code: 404, message: 'Team not found' });
+        }
       } else {
-        res.send({ status_code: 200, message: 'User left failed' });
+        res.send({ status_code: 404, message: 'Team not found' });
       }
     } else {
       res.send({ status_code: 404, message: 'User not found' });
