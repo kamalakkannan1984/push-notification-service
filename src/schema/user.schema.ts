@@ -14,8 +14,12 @@ user.loginReq = {
     properties: {
       username: { type: 'string' },
       password: { type: 'string' },
+      source: { type: 'string' },
+      deviceId: { type: 'string' },
+      ipAddress: { type: 'string' }
+
     },
-    required: ['username', 'password'],
+    required: ['username', 'password', 'source', 'deviceId', 'ipAddress'],
   },
 };
 

@@ -369,4 +369,118 @@ teamHandler.userSessionInfo = async function (req: any, res: any, done: any) {
     res.send({ status_code: 500, message: 'internal server error' });
   }
 };
+
+//add member
+teamHandler.addMember = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    const memberData: any = {};
+    const addMember: any = {};
+    const teamData: any = {};
+    data.company_id = req.body.company_id;
+    data.name = req.body.name;
+    data.service = req.body.service;
+    data.fromJid = req.body.fromJid;
+    data.toJid = req.body.toJid;
+    const teamMemberFrom = data.fromJid.split('@');
+    const teamMemberTo = data.toJid.split('@');
+    const recordFrom = await userModel.getUserById(teamMemberFrom[0]);
+    const recordTo = await userModel.getUserById(teamMemberFrom[0]);
+    if (recordFrom.length === 1 && recordTo.length === 1) {
+      const team = data.name.match(/\d+/g);
+      memberData.team_id = team[0];
+      memberData.extension = teamMemberTo[0];
+      memberData.processtype = 1;
+      const addResult = await userModel.addRemoveMember(memberData);
+      if (addResult[0].errcode !== -1) {
+        addMember.name = req.body.name;
+        addMember.service = req.body.service;
+        addMember.jid = data.toJid;
+        addMember.affiliation = 'member';
+        const teamService = new TeamService();
+        const setRoomAffiliationsResult = await teamService.setRoomAffiliation(addMember);
+        teamData.name = data.name;
+        teamData.service = data.service;
+        teamData.password = '';
+        teamData.reason = data.name;
+        teamData.users = data.toJid;
+        const messageService = new MessageService();
+        await messageService.sendDirectInvitation(teamData);
+        const messageData: any = {};
+        messageData.type = 'chat';
+        messageData.from = data.fromJid;
+        messageData.to = data.toJid;
+        messageData.subject = '';
+        messageData.body = recordFrom[0].caller_id + ' Added you';
+        await messageService.sendMessage(messageData);
+        messageData.to = teamData.name + '@' + teamData.service;
+        messageData.body = recordFrom[0].caller_id + ' Added' + recordTo[0].caller_id;
+        await messageService.sendMessage(messageData);
+        res.send({ status_code: 200, message: 'Member added successfully' });
+      } else {
+        res.send({ status_code: 404, message: addResult[0].errmsg });
+      }
+    } else {
+      res.send({ status_code: 404, message: 'User not found' });
+    }
+
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
+//remove member
+teamHandler.removeMember = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    const memberData: any = {};
+    const removeMember: any = {};
+    const teamData: any = {};
+    data.company_id = req.body.company_id;
+    data.name = req.body.name;
+    data.service = req.body.service;
+    data.fromJid = req.body.fromJid;
+    data.toJid = req.body.toJid;
+    const teamMemberFrom = data.fromJid.split('@');
+    const teamMemberTo = data.toJid.split('@');
+    const recordFrom = await userModel.getUserById(teamMemberFrom[0]);
+    const recordTo = await userModel.getUserById(teamMemberFrom[0]);
+    if (recordFrom.length === 1 && recordTo.length === 1) {
+      const team = data.name.match(/\d+/g);
+      memberData.team_id = team[0];
+      memberData.extension = teamMemberTo[0];
+      memberData.processtype = 2;
+      const removeResult = await userModel.addRemoveMember(memberData);
+      if (removeResult[0].errcode !== -1) {
+        const messageService = new MessageService();
+        const messageData: any = {};
+        messageData.type = 'chat';
+        messageData.from = data.fromJid;
+        messageData.to = data.toJid;
+        messageData.subject = '';
+        messageData.body = recordFrom[0].caller_id + ' Removed you';
+        await messageService.sendMessage(messageData);
+        messageData.to = teamData.name + '@' + teamData.service;
+        messageData.body = recordFrom[0].caller_id + ' Removed' + recordTo[0].caller_id;
+        await messageService.sendMessage(messageData);
+        removeMember.name = req.body.name;
+        removeMember.service = req.body.service;
+        removeMember.jid = data.toJid;
+        removeMember.affiliation = 'none';
+        const teamService = new TeamService();
+        const setRoomAffiliationsResult = await teamService.setRoomAffiliation(removeMember);
+        res.send({ status_code: 200, message: 'Member removed successfully' });
+      } else {
+        res.send({ status_code: 404, message: removeResult[0].errmsg });
+      }
+    } else {
+      res.send({ status_code: 404, message: 'User not found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
 export const teamHandlers: any = teamHandler;

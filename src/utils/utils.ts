@@ -71,8 +71,9 @@ utils.dateDiffSec = (val: any) => {
   return Math.ceil(diffTime / (1000 * 60));
 };
 
-utils.createSession = (username: string, password: string) => {
-  return generateToken(username, password);
+utils.createSession = (data: any) => {
+  /* data.login_user_name, data.login_password, data.login_device_id*/
+  return generateToken(data);
 };
 
 utils.validateSession = (token: string) => {
@@ -86,10 +87,18 @@ utils.validateSession = (token: string) => {
   });
 };
 
-function generateToken(username: string, password: string) {
+function generateToken(data: any) {
+  const username = data.login_user_name;
+  const password = data.login_password;
+  const deviceId = data.login_device_id;
+  const sipLoginId = data.sip_login_id;
+  const roleId = data.role_id;
   const jwtPayload = {
     username,
     password,
+    deviceId,
+    sipLoginId,
+    roleId
   };
 
   return jwt.sign(jwtPayload, config.jwt_secret);

@@ -480,5 +480,35 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     messageHandlers.clearCache,
   );
+
+  //add member
+  fastify.post(
+    '/api/add_member',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Add member Api',
+        tags: ['team'],
+        body: teamSchema.addMember.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.addMember,
+  );
+
+  // remove member
+  fastify.post(
+    '/api/remove_member',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'remove member Api',
+        tags: ['team'],
+        body: teamHandlers.removeMember.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.removeMember,
+  );
   done();
 };

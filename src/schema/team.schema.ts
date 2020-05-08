@@ -167,4 +167,36 @@ team.userSessionInfo = {
   },
 };
 
+
+//add member
+team.addMember = {
+  body: {
+    type: 'object',
+    properties: {
+      company_id: { type: 'number' },
+      name: { type: 'string' },
+      service: { type: 'string' },
+      fromJid: { type: 'string' },
+      toJid: { type: 'string' }
+    }
+  }
+}
+
+/* {"company_id":"1698","name":"con764","service":"conference.im01.unifiedring.co.uk”,
+”fromJid":”2334@im01.unifiedring.co.uk”,”toJid":"2336@im01.unifiedring.co.uk"}*/
+//remove member
+team.removeMember = {
+  body: {
+    type: 'object',
+    properties: {
+      company_id: { type: 'number' },
+      name: { type: 'string' },
+      service: { type: 'string' },
+      fromJid: { type: 'string' },
+      toJid: { type: 'string' }
+    }
+  }
+}
+
+
 export const teamSchema = team;

@@ -29,12 +29,15 @@ authHandler.validateSession = (req: any, reply: any, done: any) => {
         req.headers.authorization,
         process.env.JWT_SECRET ? process.env.JWT_SECRET : config.jwt_secret,
       );
-      if (!decoded.username && !decoded.password) {
+      if (!decoded.username && !decoded.password && !decoded.deviceId) {
         return done({ status_code: 401, message: 'Invalid authorization' });
       } else {
         req['authorization'] = {
           username: decoded.username,
-          passwowrd: decoded.password,
+          password: decoded.password,
+          deviceId: decoded.deviceId,
+          sipLoginId: decoded.sipLoginId,
+          roleId: decoded.roleId
         };
         done();
       }

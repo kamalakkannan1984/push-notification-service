@@ -12,11 +12,11 @@ const userHandler: any = {};
 userHandler.login = async function (req: any, res: any, done: any) {
   try {
     const loginData: any = {};
-    loginData.login_user_name = req.body.login_user_name;
-    loginData.login_password = req.body.login_password;
-    loginData.login_device_id = req.body.login_device_id;
-    loginData.login_source = req.body.login_source;
-    loginData.login_ipaddress = req.connection.remoteAddress;
+    loginData.login_user_name = req.body.username;
+    loginData.login_password = req.body.password;
+    loginData.login_device_id = req.body.deviceId;
+    loginData.login_source = req.body.source;
+    loginData.login_ipaddress = req.body.ipAddress;
     const loginResult = await userModel.login(loginData);
     if (loginResult.status === 1) {
       res.send({ status_code: 200, message: 'login success', authorization: loginResult.token });
