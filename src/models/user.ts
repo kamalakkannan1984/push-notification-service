@@ -26,7 +26,7 @@ userModel.login = (data: any) => {
     try {
       const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
       pool.connect().then(() => {
-        const request = new sql.Request(pool);
+        const request = new sql.Request(pool);       
         request.input('login_user_name', sql.Text, data.login_user_name);
         request.input('login_password', sql.Text, data.login_password);
         request.input('login_source', sql.Text, data.login_source);
