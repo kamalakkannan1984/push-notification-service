@@ -10,19 +10,6 @@ export const userModel: any = {};
 // login
 userModel.login = (data: any) => {
   return new Promise(async (resolve, reject) => {
-    /*try {
-      if (data.username === config.basic_uname && data.password === config.basic_pw) {
-        const token = utils.createSession(data.username, data.password);
-        resolve({ status: 1, token: token });
-      } else {
-        resolve({ status: 0, token: '' });
-      }
-    } catch (err) {
-      console.log(err);
-      reject(err);
-    }
-  }); */
-
     try {
       const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
       pool.connect().then(() => {
@@ -39,7 +26,6 @@ userModel.login = (data: any) => {
             console.log(err);
             reject(err);
           }
-          console.log(result);
           if (result.recordset[0].error_code === 0) {
             data.sip_login_id = result.recordset[0].sip_login_id;
             data.role_id = result.recordset[0].role_id;
@@ -54,7 +40,7 @@ userModel.login = (data: any) => {
       reject(err);
     }
   });
-}
+};
 
 /**
  * @param {String} userName - where codition to fetch data
@@ -68,18 +54,13 @@ userModel.getTeamInfo = (company_id: number, team_id: number, extension: string)
         request.input('company_id', sql.Int, company_id);
         request.input('team_id', sql.Int, team_id);
         request.input('extension', sql.Int, extension);
-        //request.output('output_parameter', sql.Int)
+        // request.output('output_parameter', sql.Int)
         request.execute('ur_app_get_team_info', (err: any, result: any) => {
           // ... error checks
-          if (err) console.log(err);
-          console.log(result);
+          if (err) {
+            console.log(err);
+          }
           resolve(result);
-          console.log(result.recordsets.length); // count of recordsets returned by the procedure
-          console.log(result.recordsets[0].length); // count of rows contained in first recordset
-          console.log(result.recordset); // first recordset from result.recordsets
-          console.log(result.returnValue); // procedure return value
-          console.log(result.output); // key/value collection of output values
-          console.log(result.rowsAffected); // array of numbers, each number represents the number of rows affected by executed statemens
         });
       });
     } catch (err) {
@@ -119,7 +100,7 @@ userModel.getCompanyContact = (company_id: number) => {
   });
 };
 
-//saveCreateTeam
+// saveCreateTeam
 userModel.saveCreateTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -143,9 +124,9 @@ userModel.saveCreateTeam = (data: any) => {
         request.input('team_guid', sql.Text, dataArr.team_guid);
         request.input('profile_image_url', sql.Text, dataArr.photo_info);
         request.input('team_id_prefix', sql.Text, dataArr.team_id_prefix);
-        //request.input('archived', sql.Text, "")
-        //request.input('Delete_image', sql.Text, 'false')
-        //request.input('get_image', sql.Text, 'false')
+        // request.input('archived', sql.Text, "")
+        // request.input('Delete_image', sql.Text, 'false')
+        // request.input('get_image', sql.Text, 'false')
         request.execute('ur_app_create_team_info', (err: any, result: any) => {
           // ... error checks
           if (err) {
@@ -161,11 +142,6 @@ userModel.saveCreateTeam = (data: any) => {
   });
 };
 
-/*spname: ur_app_get_user_individual_details
-input : @sip_login_id int
-output : login_user_name varchar
-      caller_id varchar
-*/
 userModel.getUserById = (sip_login_id: number) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -188,7 +164,7 @@ userModel.getUserById = (sip_login_id: number) => {
   });
 };
 
-//leave team
+// leave team
 userModel.leaveTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -215,7 +191,7 @@ userModel.leaveTeam = (data: any) => {
   });
 };
 
-//delete team
+// delete team
 userModel.deleteTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -239,7 +215,7 @@ userModel.deleteTeam = (data: any) => {
   });
 };
 
-//add member
+// add member
 userModel.addRemoveMember = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -265,4 +241,4 @@ userModel.addRemoveMember = (data: any) => {
     }
   });
 };
-//module.exports = userModel;
+// module.exports = userModel;

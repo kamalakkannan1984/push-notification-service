@@ -17,7 +17,6 @@ const teamHandler: any = {};
  * @description - Create team function
  */
 
-// createTeam
 teamHandler.createTeam = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
@@ -355,22 +354,7 @@ teamHandler.getUserRooms = async function (req: any, res: any, done: any) {
   }
 };
 
-// userSessionInfo
-teamHandler.userSessionInfo = async function (req: any, res: any, done: any) {
-  try {
-    const data: any = {};
-    data.user = req.body.userId;
-    data.host = config.ejabberdHost;
-    const teamService = new TeamService();
-    const userSessionList = await teamService.userSessionInfo(data);
-    res.send({ status_code: 200, result: userSessionList });
-  } catch (err) {
-    console.log(err);
-    res.send({ status_code: 500, message: 'internal server error' });
-  }
-};
-
-//add member
+// add member
 teamHandler.addMember = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
@@ -423,14 +407,13 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
     } else {
       res.send({ status_code: 404, message: 'User not found' });
     }
-
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
   }
 };
 
-//remove member
+// remove member
 teamHandler.removeMember = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};

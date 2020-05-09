@@ -45,3 +45,17 @@ eventModel.deleteEvent = (data: any, eventCollection: any) => {
     }
   });
 };
+
+// getTasks
+eventModel.getEvent = (data: any, eventCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get event');
+      const res = await eventCollection.findOne({ sip_id: data.sip_id }, { _id: 0 });
+      resolve(res);
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};

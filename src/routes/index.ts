@@ -285,11 +285,11 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       schema: {
         description: 'Get user session or presence information api',
         tags: ['user'],
-        body: teamSchema.userSessionInfo.body,
+        body: userSchema.userSessionInfo.body,
         // response: userSchema.createTeamRes
       },
     },
-    teamHandlers.userSessionInfo,
+    userHandlers.userSessionInfo,
   );
 
   fastify.post(
@@ -304,6 +304,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       },
     },
     eventHandlers.createEvent,
+  );
+
+  fastify.get(
+    '/api/event/:sip_id',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Get event api',
+        tags: ['event'],
+        params: eventSchema.getEvent.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    eventHandlers.getEvent,
   );
 
   fastify.put(
@@ -349,6 +363,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     tasksHandlers.createTasks,
   );
 
+  fastify.get(
+    '/api/tasks/:sip_id',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Get tasks api',
+        tags: ['tasks'],
+        params: tasksSchema.getTasks.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    tasksHandlers.getTasks,
+  );
+
   fastify.put(
     '/api/tasks/:uid',
     {
@@ -390,6 +418,20 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       },
     },
     noteHandlers.createNote,
+  );
+
+  fastify.get(
+    '/api/note/:sender',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Get note api',
+        tags: ['note'],
+        params: noteSchema.getNote.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    noteHandlers.getNote,
   );
 
   fastify.put(

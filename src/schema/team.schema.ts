@@ -113,7 +113,7 @@ team.destroyRoom = {
     properties: {
       name: { type: 'string' },
       service: { type: 'string' },
-      company_id: { type: 'number' }
+      company_id: { type: 'number' },
     },
     required: ['name', 'service', 'company_id'],
   },
@@ -128,7 +128,7 @@ team.leaveTeam = {
       service: { type: 'string' },
       jid: { type: 'string' },
       company_id: { type: 'number' },
-      extension: { type: 'number' }
+      extension: { type: 'number' },
     },
     required: ['name', 'service', 'jid', 'company_id', 'extension'],
   },
@@ -157,18 +157,7 @@ team.getUserRooms = {
   },
 };
 
-team.userSessionInfo = {
-  body: {
-    type: 'object',
-    properties: {
-      userId: { type: 'string' },
-    },
-    required: ['userId'],
-  },
-};
-
-
-//add member
+// add member
 team.addMember = {
   body: {
     type: 'object',
@@ -177,10 +166,10 @@ team.addMember = {
       name: { type: 'string' },
       service: { type: 'string' },
       fromJid: { type: 'string' },
-      toJid: { type: 'string' }
-    }
-  }
-}
+      toJid: { type: 'string' },
+    },
+  },
+};
 
 /* {"company_id":"1698","name":"con764","service":"conference.im01.unifiedring.co.uk”,
 ”fromJid":”2334@im01.unifiedring.co.uk”,”toJid":"2336@im01.unifiedring.co.uk"}*/
@@ -193,10 +182,9 @@ team.removeMember = {
       name: { type: 'string' },
       service: { type: 'string' },
       fromJid: { type: 'string' },
-      toJid: { type: 'string' }
-    }
-  }
-}
-
+      toJid: { type: 'string' },
+    },
+  },
+};
 
 export const teamSchema = team;

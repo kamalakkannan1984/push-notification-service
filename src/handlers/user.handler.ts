@@ -139,4 +139,19 @@ userHandler.changePassword = async function (req: any, res: any, done: any) {
   }
 };
 
+// userSessionInfo
+userHandler.userSessionInfo = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.user = req.body.userId;
+    data.host = config.ejabberdHost;
+    const userService = new UserService();
+    const userSessionList = await userService.userSessionInfo(data);
+    res.send({ status_code: 200, result: userSessionList });
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
 export const userHandlers: any = userHandler;

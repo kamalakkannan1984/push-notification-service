@@ -262,29 +262,6 @@ class Team {
       }
     });
   }
-
-  /**
-   * userSessionInfo
-   */
-  public userSessionInfo(data: any) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        return await axios
-          .post(`https://${this.host}:${this.port}/${this.prefix}/user_sessions_info`, data)
-          .then((response) => {
-            console.log(response);
-            resolve(response.data);
-          })
-          .catch((error) => {
-            console.log(error);
-            reject(error);
-          });
-      } catch (err) {
-        console.log(err);
-        reject(err);
-      }
-    });
-  }
 }
 
 export default Team;

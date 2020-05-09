@@ -45,3 +45,17 @@ tasksModel.deleteTasks = (data: any, tastsCollection: any) => {
     }
   });
 };
+
+// getTasks
+tasksModel.getTasks = (data: any, tastsCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get tasks');
+      const res = await tastsCollection.findOne({ sip_id: data.sip_id }, { _id: 0 });
+      resolve(res);
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};

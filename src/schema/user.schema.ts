@@ -16,8 +16,7 @@ user.loginReq = {
       password: { type: 'string' },
       source: { type: 'string' },
       deviceId: { type: 'string' },
-      ipAddress: { type: 'string' }
-
+      ipAddress: { type: 'string' },
     },
     required: ['username', 'password', 'source', 'deviceId', 'ipAddress'],
   },
@@ -152,6 +151,16 @@ user.changePassword = {
       sipNewPassword: { type: 'string' },
     },
     required: ['userid', 'sipNewPassword'],
+  },
+};
+
+user.userSessionInfo = {
+  body: {
+    type: 'object',
+    properties: {
+      userId: { type: 'string' },
+    },
+    required: ['userId'],
   },
 };
 

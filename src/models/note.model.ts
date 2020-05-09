@@ -45,3 +45,17 @@ noteModel.deleteNote = (data: any, noteCollection: any) => {
     }
   });
 };
+
+//getNote
+noteModel.getNote = (data: any, noteCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get event');
+      const res = await noteCollection.findOne({ sender: data.sender }, { _id: 0 });
+      resolve(res);
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};

@@ -7,33 +7,23 @@ const note: any = {};
 
 /* ##################################################################################### */
 // create note
-/* {
-    "_id" : ObjectId("5e4e6bbe4816c26b4869cf21"),
-    "DESCRIPTION" : "RESTVIEW",
-    "SUMMARY" : "HOLLYWOOD",
-    "UID" : "16541582197562431",
-    "DTSTART" : "1582197562.432753",
-    "SENDER" : "1654@6367.unifiedring.co.uk",
-    "MSGID" : "16541582197562431",
-    "RECEIVER" : "2451@6367.unifiedring.co.uk",
-    "GROUPID" : "",
-    "OWNERID" : "1654@6367.unifiedring.co.uk"
-}*/
+
 note.createNote = {
   body: {
     type: 'object',
     properties: {
       description: { type: 'string' },
       summary: { type: 'string' },
-      uId: { type: 'string' },
+      uid: { type: 'string' },
       dtStart: { type: 'string' },
       sender: { type: 'string' },
       msgId: { type: 'string' },
       receiver: { type: 'string' },
       groupId: { type: 'string' },
-      ownerId: { type: 'string' },
+      owner_id: { type: 'string' },
+      company_id: { type: 'number' },
     },
-    required: ['description', 'uId'],
+    required: ['company_id', 'owner_id', 'receiver'],
   },
 };
 
@@ -51,14 +41,16 @@ note.updateNote = {
     properties: {
       description: { type: 'string' },
       summary: { type: 'string' },
+      uid: { type: 'string' },
       dtStart: { type: 'string' },
       sender: { type: 'string' },
       msgId: { type: 'string' },
       receiver: { type: 'string' },
       groupId: { type: 'string' },
-      ownerId: { type: 'string' },
+      owner_id: { type: 'string' },
+      company_id: { type: 'number' },
     },
-    required: ['description'],
+    required: ['company_id', 'owner_id', 'receiver'],
   },
 };
 
@@ -73,5 +65,15 @@ note.deleteNote = {
   },
 };
 
+// getNote
+note.getNote = {
+  params: {
+    type: 'object',
+    properties: {
+      sender: { type: 'string' },
+    },
+    required: ['sender'],
+  },
+};
 /* ######################################################################################## */
 export const noteSchema = note;
