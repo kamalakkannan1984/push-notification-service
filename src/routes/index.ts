@@ -335,14 +335,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     eventHandlers.updateEvent,
   );
 
-  fastify.delete(
-    '/api/event/:uid',
+  fastify.post(
+    '/api/delete_event',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete event api',
         tags: ['event'],
-        params: eventSchema.deleteEvent.params,
+        body: eventSchema.deleteEvent.body,
         // response: userSchema.createTeamRes
       },
     },
@@ -392,14 +392,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     tasksHandlers.updateTasks,
   );
 
-  fastify.delete(
-    '/api/tasks/:uid',
+  fastify.post(
+    '/api/delete_tasks',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete tasks api',
         tags: ['tasks'],
-        params: tasksSchema.deleteTasks.params,
+        body: tasksSchema.deleteTasks.body,
         // response: userSchema.createTeamRes
       },
     },
@@ -449,14 +449,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     noteHandlers.updateNote,
   );
 
-  fastify.delete(
-    '/api/note/:uid',
+  fastify.post(
+    '/api/delete_note',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Delete note api',
         tags: ['note'],
-        params: noteSchema.deleteNote.params,
+        body: noteSchema.deleteNote.body,
         // response: userSchema.createTeamRes
       },
     },

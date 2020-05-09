@@ -56,7 +56,7 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
 
     // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
     const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.thread_id}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.thread_id}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     await eventModel.createEvent(data, eventCollection);
     console.log(stanzaData);
@@ -118,12 +118,16 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     data.location = req.body.location;
     data.company_id = req.body.company_id;
     const stanzaData: any = {};
-    stanzaData.from = data.OWNERID;
-    stanzaData.to = data.RECEIVER;
-    const chatType = data.GROUPID ? 'groupchat' : 'chat';
+    stanzaData.from = data.owner_id;
+    stanzaData.to = data.receiver;
+    const chatType = data.group_id ? 'groupchat' : 'chat';
     const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.thread_id}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.thread_id}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    //    
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
+    const result = await eventModel.getEvent(data, eventCollection);
+    //
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+
     await eventModel.updateEvent(uid, data, eventCollection);
     const messageService = new MessageService();
     const sendMessageResult = await messageService.sendStanza(stanzaData);
@@ -149,8 +153,20 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
 eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.UID = req.params.uid;
+    data.uid = req.body.uid;
+    data.owner_id = req.body.owner_id;
+    data.sip_id = req.body.sip_id;
+    data.group_id = req.body.group_id;
+    data.receiver = req.body.receiver;
+    data.thread_id = req.body.thread_id;
+    data.msgid = req.body.msgid;
+    const stanzaData: any = {};
+    stanzaData.from = data.owner_id;
+    stanzaData.to = data.receiver;
+    const chatType = data.group_id ? 'groupchat' : 'chat';
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
+    const result = await eventModel.getEvent(data, eventCollection);
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     const deleteRes = await eventModel.deleteEvent(data, eventCollection);
     if (deleteRes.deletedCount > 0) {
       res.send({ status_code: 200, message: 'Event deleted successfully' });

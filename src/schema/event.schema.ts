@@ -98,13 +98,26 @@ event.updateEvent = {
 };
 
 // delete event
+/* data.uid = req.body.uid;
+    data.owner_id = req.body.owner_id;
+    data.sip_id = req.body.sip_id;
+    data.group_id = req.body.group_id;
+    data.receiver = req.body.receiver;
+    data.thread_id = req.body.thread_id;
+    data.msgid = req.body.msgid;*/
 event.deleteEvent = {
-  params: {
+  body: {
     type: 'object',
     properties: {
       uid: { type: 'string' },
+      owner_id: { type: 'string' },
+      sip_id: { type: 'string' },
+      group_id: { type: 'string' },
+      receiver: { type: 'string' },
+      thread_id: { type: 'string' },
+      msgid: { type: 'string' }
     },
-    required: ['uid'],
+    required: ['uid', 'owner_id', 'sip_id', 'receiver', 'thread_id', 'msgid'],
   },
 };
 

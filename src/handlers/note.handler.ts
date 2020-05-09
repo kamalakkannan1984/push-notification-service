@@ -33,7 +33,7 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     await noteModel.createNote(data, noteCollection);
     const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgId}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgId}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.msgId}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgId}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgId}' xmlns="urn:xmpp:sid:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.msgId}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     const messageService = new MessageService();
     const sendMessageResult = await messageService.sendStanza(stanzaData);
     if (sendMessageResult === 0) {
@@ -73,9 +73,10 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
     stanzaData.from = data.OWNERID;
     stanzaData.to = data.RECEIVER;
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
+    const result = await noteModel.getNote(data, noteCollection);
     await noteModel.updateNote(uid, data, noteCollection);
     const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgId}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgId}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.msgId}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgId}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgId}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgId}" xmlns="urn:xmpp:message-correct:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.msgId}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     const messageService = new MessageService();
     const sendMessageResult = await messageService.sendStanza(stanzaData);
     if (sendMessageResult === 0) {
@@ -100,7 +101,21 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
     data.UID = req.params.uid;
+    //
+    data.uid = req.body.uid;
+    data.owner_id = req.body.owner_id;
+    data.sender = req.body.sender;
+    data.group_id = req.body.group_id;
+    data.receiver = req.body.receiver;
+    data.msgId = req.body.msgId;
+    const stanzaData: any = {};
+    stanzaData.from = data.owner_id;
+    stanzaData.to = data.receiver;
+    const chatType = data.group_id ? 'groupchat' : 'chat';
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
+    const result = await noteModel.getNote(data, noteCollection);
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgId}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgId}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgId}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgId}" xmlns="urn:xmpp:message-correct:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+
     const deleteRes = await noteModel.deleteNote(data, noteCollection);
     if (deleteRes.deletedCount > 0) {
       res.send({ status_code: 200, message: 'Note deleted successfully' });

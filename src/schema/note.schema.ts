@@ -56,10 +56,15 @@ note.updateNote = {
 
 // delete note
 note.deleteNote = {
-  params: {
+  body: {
     type: 'object',
     properties: {
       uid: { type: 'string' },
+      owner_id: { type: 'string' },
+      sender: { type: 'string' },
+      group_id: { type: 'string' },
+      receiver: { type: 'string' },
+      msgId: { type: 'string' }
     },
     required: ['uid'],
   },

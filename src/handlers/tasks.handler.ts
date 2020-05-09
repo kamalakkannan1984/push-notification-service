@@ -53,7 +53,7 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     const chatType = data.group_id ? 'groupchat' : 'chat';
 
     const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.thread_id}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.thread_id}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
 
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     await tasksModel.createTasks(data, tasksCollection);
@@ -118,12 +118,10 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     stanzaData.from = data.owner_id;
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
-
-    // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
-    const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.thread_id}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.thread_id}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
-
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
+    const getTasks = await tasksModel.getTasks(data, tasksCollection);
+    const body = JSON.stringify(data);
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     await tasksModel.updateTasks(uid, data, tasksCollection);
     console.log(stanzaData);
     const messageService = new MessageService();
@@ -150,8 +148,22 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
 tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.uid = req.params.uid;
+    //
+    data.uid = req.body.uid;
+    data.owner_id = req.body.owner_id;
+    data.sip_id = req.body.sip_id;
+    data.group_id = req.body.group_id;
+    data.receiver = req.body.receiver;
+    data.thread_id = req.body.thread_id;
+    data.msgid = req.body.msgid;
+    const stanzaData: any = {};
+    stanzaData.from = data.owner_id;
+    stanzaData.to = data.receiver;
+    const chatType = data.group_id ? 'groupchat' : 'chat';
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
+    const getTasks = await tasksModel.getTasks(data, tasksCollection);
+    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    //
     const deleteRes = await tasksModel.deleteTasks(data, tasksCollection);
     if (deleteRes.deletedCount > 0) {
       res.send({ status_code: 200, message: 'Task deleted successfully' });

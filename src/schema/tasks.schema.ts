@@ -93,12 +93,18 @@ tasks.updateTasks = {
 
 // delete tasks
 tasks.deleteTasks = {
-  params: {
+  body: {
     type: 'object',
     properties: {
       uid: { type: 'string' },
+      owner_id: { type: 'string' },
+      sip_id: { type: 'string' },
+      group_id: { type: 'string' },
+      receiver: { type: 'string' },
+      thread_id: { type: 'string' },
+      msgid: { type: 'string' }
     },
-    required: ['uid'],
+    required: ['uid', 'owner_id', 'sip_id', 'receiver', 'thread_id', 'msgid'],
   },
 };
 
