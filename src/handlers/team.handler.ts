@@ -256,10 +256,10 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
     data.jid = req.body.jid;
     data.affiliation = 'none';
     data.company_id = req.body.company_id;
-    data.extension = req.body.extension;
+    const teamMember = data.jid.split('@');
+    data.SIPID = parseInt(teamMember[0]);
     const messageService = new MessageService();
     const teamService = new TeamService();
-    const teamMember = data.jid.split('@');
     const record = await userModel.getUserById(teamMember[0]);
     if (record.length === 1) {
       const messageData: any = {};
@@ -319,6 +319,7 @@ teamHandler.roleChange = async function (req: any, res: any, done: any) {
     data.service = req.body.service;
     data.jid = req.body.jid;
     data.affiliation = req.body.role;
+
     const teamService = new TeamService();
     const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
     console.log(setRoomAffiliationsResult);
@@ -373,7 +374,7 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
     if (recordFrom.length === 1 && recordTo.length === 1) {
       const team = data.name.match(/\d+/g);
       memberData.team_id = team[0];
-      memberData.extension = teamMemberTo[0];
+      memberData.SIPID = teamMemberTo[0];
       memberData.processtype = 1;
       const addResult = await userModel.addRemoveMember(memberData);
       if (addResult[0].errcode !== -1) {
@@ -432,7 +433,7 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
     if (recordFrom.length === 1 && recordTo.length === 1) {
       const team = data.name.match(/\d+/g);
       memberData.team_id = team[0];
-      memberData.extension = teamMemberTo[0];
+      memberData.SIPID = teamMemberTo[0];
       memberData.processtype = 2;
       const removeResult = await userModel.addRemoveMember(memberData);
       if (removeResult[0].errcode !== -1) {

@@ -48,7 +48,7 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     data.location = req.body.location;
     data.company_id = req.body.company_id;
     const stanzaData: any = {};
-    stanzaData.from = data.ownerid;
+    stanzaData.from = data.owner_id;
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
 
@@ -115,7 +115,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     data.location = req.body.location;
     data.company_id = req.body.company_id;
     const stanzaData: any = {};
-    stanzaData.from = data.ownerid;
+    stanzaData.from = data.owner_id;
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
 
@@ -171,13 +171,8 @@ tasksHandler.getTasks = async function (req: any, res: any, done: any) {
     data.sip_id = req.params.sip_id;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     const getTasks = await tasksModel.getTasks(data, tasksCollection);
-    console.log(getTasks);
     res.send({ status_code: 200, result: getTasks });
-    /*if (deleteRes.deletedCount > 0) {
-      res.send({ status_code: 200, message: 'Task deleted successfully' });
-    } else {
-      res.send({ status_code: 200, message: 'Task delete failed' });
-    }*/
+
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });

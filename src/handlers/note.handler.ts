@@ -28,8 +28,8 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
     data.company_id = req.body.company_id;
     const chatType = data.GROUPID ? 'groupchat' : 'chat';
     const stanzaData: any = {};
-    stanzaData.from = data.OWNERID;
-    stanzaData.to = data.RECEIVER;
+    stanzaData.from = data.owner_id;
+    stanzaData.to = data.receiver;
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     await noteModel.createNote(data, noteCollection);
     const body = JSON.stringify(data);

@@ -173,7 +173,7 @@ userModel.leaveTeam = (data: any) => {
       pool.connect().then(() => {
         const request = new sql.Request(pool);
         request.input('company_id', sql.Int, data.company_id);
-        request.input('extension', sql.Int, data.extension);
+        request.input('SIPID', sql.Int, data.SIPID);
         request.input('team', sql.Text, data.team);
         request.execute('ur_app_leave_team', (err: any, result: any) => {
           // ... error checks
@@ -224,7 +224,7 @@ userModel.addRemoveMember = (data: any) => {
       pool.connect().then(() => {
         const request = new sql.Request(pool);
         request.input('team_id', sql.Int, data.team_id);
-        request.input('extension', sql.Text, data.extension);
+        request.input('SIPID', sql.Text, data.SIPID);
         request.input('processtype', sql.Int, data.processtype);
         request.execute('ur_app_create_team_member_info', (err: any, result: any) => {
           // ... error checks
