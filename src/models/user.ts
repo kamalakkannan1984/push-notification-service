@@ -45,7 +45,7 @@ userModel.login = (data: any) => {
 /**
  * @param {String} userName - where codition to fetch data
  */
-userModel.getTeamInfo = (company_id: number, team_id: number, extension: string) => {
+userModel.getTeamInfo = (company_id: number, team_id: number, SIPID: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
@@ -53,14 +53,13 @@ userModel.getTeamInfo = (company_id: number, team_id: number, extension: string)
         const request = new sql.Request(pool);
         request.input('company_id', sql.Int, company_id);
         request.input('team_id', sql.Int, team_id);
-        request.input('extension', sql.Int, extension);
-        // request.output('output_parameter', sql.Int)
+        request.input('SIPID', sql.Int, SIPID);
         request.execute('ur_app_get_team_info', (err: any, result: any) => {
           // ... error checks
           if (err) {
             console.log(err);
           }
-          resolve(result);
+          resolve(result.recordset);
         });
       });
     } catch (err) {

@@ -106,6 +106,7 @@ class Team {
         dataArr.service = data.service;
         dataArr.jid = data.jid;
         dataArr.affiliation = data.affiliation;
+        console.log(dataArr);
         return await axios
           .post(`https://${this.host}:${this.port}/${this.prefix}/set_room_affiliation`, dataArr)
           .then((response) => {
@@ -137,7 +138,7 @@ class Team {
           })
           .catch((err: any) => {
             console.log(err.response.data);
-            reject(err.response.data);
+            resolve(err.response.data);
           });
       } catch (err) {
         console.log(err);

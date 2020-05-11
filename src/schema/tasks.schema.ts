@@ -41,7 +41,7 @@ tasks.createTasks = {
       location: { type: 'string' },
       company_id: { type: 'number' },
     },
-    required: ['owner_id', 'sip_id', 'company_id'],
+    required: ['owner_id', 'sip_id', 'company_id', 'group_id', 'uid', 'msgid', 'receiver'],
   },
 };
 
@@ -63,7 +63,6 @@ tasks.updateTasks = {
       msgid: { type: 'string' },
       description: { type: 'string' },
       complete_percentage: { type: 'string' },
-      uid: { type: 'string' },
       category_color: { type: 'string' },
       last_modified: { type: 'string' },
       completed_when: { type: 'string' },
@@ -87,7 +86,7 @@ tasks.updateTasks = {
       location: { type: 'string' },
       company_id: { type: 'number' },
     },
-    required: ['owner_id', 'sip_id', 'company_id'],
+    required: ['owner_id', 'sip_id', 'company_id', 'group_id', 'receiver', 'msgid'],
   },
 };
 
@@ -104,7 +103,7 @@ tasks.deleteTasks = {
       thread_id: { type: 'string' },
       msgid: { type: 'string' }
     },
-    required: ['uid', 'owner_id', 'sip_id', 'receiver', 'thread_id', 'msgid'],
+    required: ['uid', 'owner_id', 'sip_id', 'receiver', 'group_id', 'msgid'],
   },
 };
 

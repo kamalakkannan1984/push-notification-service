@@ -97,10 +97,10 @@ team.getTeamInfo = {
     type: 'object',
     properties: {
       company_id: { type: 'number' },
-      team_id: { type: 'number' },
-      extension: { type: 'string' },
+      team_id: { type: 'string' },
+      sipid: { type: 'string' },
     },
-    required: ['company_id', 'team_id', 'extension'],
+    required: ['company_id', 'team_id', 'sipid'],
   },
 };
 

@@ -170,9 +170,9 @@ teamHandler.getTeamInfo = async function (req: any, res: any, done: any) {
   try {
     const company_id = req.body.company_id;
     const team_id = req.body.team_id;
-    const extension = req.body.extension;
-    console.log(req.body);
-    const result = await userModel.getTeamInfo(company_id, team_id, extension);
+    const SIPID = req.body.sipid;
+    const team = team_id.match(/\d+/g);
+    const result = await userModel.getTeamInfo(company_id, team[0], SIPID);
     console.log(result);
     res.send({ status_code: 200, result: result });
   } catch (err) {
@@ -319,14 +319,13 @@ teamHandler.roleChange = async function (req: any, res: any, done: any) {
     data.service = req.body.service;
     data.jid = req.body.jid;
     data.affiliation = req.body.role;
-
     const teamService = new TeamService();
     const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
     console.log(setRoomAffiliationsResult);
     if (setRoomAffiliationsResult === 0) {
-      res.send({ status_code: 200, message: 'success' });
+      res.send({ status_code: 200, message: 'Role changed successfully' });
     } else {
-      res.send({ status_code: 200, message: 'failed' });
+      res.send({ status_code: 200, message: 'Role change failed' });
     }
   } catch (err) {
     console.log(err);

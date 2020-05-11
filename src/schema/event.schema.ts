@@ -45,7 +45,7 @@ event.createEvent = {
       location: { type: 'string' },
       company_id: { type: 'number' },
     },
-    required: ['summary'],
+    required: ['company_id', 'group_id', 'receiver', 'owner_id', 'msgid'],
   },
 };
 
@@ -93,7 +93,7 @@ event.updateEvent = {
       location: { type: 'string' },
       company_id: { type: 'number' },
     },
-    required: ['summary'],
+    required: ['company_id', 'group_id', 'receiver', 'owner_id', 'msgid'],
   },
 };
 
@@ -117,7 +117,7 @@ event.deleteEvent = {
       thread_id: { type: 'string' },
       msgid: { type: 'string' }
     },
-    required: ['uid', 'owner_id', 'sip_id', 'receiver', 'thread_id', 'msgid'],
+    required: ['uid', 'owner_id', 'receiver', 'group_id', 'msgid'],
   },
 };
 
