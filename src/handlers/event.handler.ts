@@ -53,20 +53,25 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
     stanzaData.from = data.owner_id;
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
-
-    // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
-    const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
-    await eventModel.createEvent(data, eventCollection);
-    console.log(stanzaData);
-    const messageService = new MessageService();
-    const sendMessageResult = await messageService.sendStanza(stanzaData);
-    console.log(sendMessageResult);
-    if (sendMessageResult === 0) {
-      res.send({ status_code: 200, message: 'Event sent successfully' });
+    const result = await eventModel.getEventByUid(data.uid, eventCollection);
+    if (result === null) {
+      // stanzaData.stanza = `<message type='${chatType}' id='${data.MSGID}' from='${data.OWNERID}' to='${data.RECEIVER}'><body>${data.DESCRIPTION}</body><markable xmlns='urn:xmpp:chat-markers:0'/><origin-id id='${data.MSGID}' xmlns='urn:xmpp:sid:0'/><message-type value='TEXT' xmlns='urn:xmpp:message-correct:0'/><thread parent=''>${data.THREAD_ID}</thread><active xmlns='http://jabber.org/protocol/chatstates'/></message>`;
+      const body = JSON.stringify(data);
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+
+      await eventModel.createEvent(data, eventCollection);
+      console.log(stanzaData);
+      const messageService = new MessageService();
+      const sendMessageResult = await messageService.sendStanza(stanzaData);
+      console.log(sendMessageResult);
+      if (sendMessageResult === 0) {
+        res.send({ status_code: 200, message: 'Event sent successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Event sent failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Event sent failed' });
+      res.send({ status_code: 200, message: `Event uid: [${data.uid}] Already exists !` });
     }
   } catch (err) {
     console.log(err);
@@ -94,7 +99,6 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     data.msgid = req.body.msgid;
     data.description = req.body.description;
     data.complete_percentage = req.body.complete_percentage;
-    data.uid = req.body.uid;
     data.category_color = req.body.category_color;
     data.last_modified = req.body.last_modified;
     data.completed_when = req.body.completed_when;
@@ -124,18 +128,22 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     const body = JSON.stringify(data);
     //    
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
-    const result = await eventModel.getEvent(data, eventCollection);
-    //
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+    const result = await eventModel.getEventByUid(uid, eventCollection);
+    if (result !== null) {
+      //
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
 
-    await eventModel.updateEvent(uid, data, eventCollection);
-    const messageService = new MessageService();
-    const sendMessageResult = await messageService.sendStanza(stanzaData);
-    console.log(sendMessageResult);
-    if (sendMessageResult === 0) {
-      res.send({ status_code: 200, message: 'Event sent successfully' });
+      await eventModel.updateEvent(uid, data, eventCollection);
+      const messageService = new MessageService();
+      const sendMessageResult = await messageService.sendStanza(stanzaData);
+      console.log(sendMessageResult);
+      if (sendMessageResult === 0) {
+        res.send({ status_code: 200, message: 'Event sent successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Event sent failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Event sent failed' });
+      res.send({ status_code: 200, message: `uid [${uid}] not found!` });
     }
     //
   } catch (err) {
@@ -153,7 +161,7 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
 eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.uid = req.body.uid;
+    const uid = req.body.uid;
     data.owner_id = req.body.owner_id;
     data.sip_id = req.body.sip_id;
     data.group_id = req.body.group_id;
@@ -165,13 +173,17 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
-    const result = await eventModel.getEvent(data, eventCollection);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
-    const deleteRes = await eventModel.deleteEvent(data, eventCollection);
-    if (deleteRes.deletedCount > 0) {
-      res.send({ status_code: 200, message: 'Event deleted successfully' });
+    const result = await eventModel.getEventByUid(uid, eventCollection);
+    if (result !== null) {
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+      const deleteRes = await eventModel.deleteEvent(uid, eventCollection);
+      if (deleteRes.deletedCount > 0) {
+        res.send({ status_code: 200, message: 'Event deleted successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Event delete failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Event delete failed' });
+      res.send({ status_code: 200, message: `uid [${uid}] not found!` });
     }
   } catch (err) {
     console.log(err);

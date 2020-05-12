@@ -23,7 +23,7 @@ noteModel.updateNote = (uid: string, data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update note');
-      const res = await noteCollection.updateOne({ UID: uid }, { $set: data });
+      const res = await noteCollection.updateOne({ uid: uid }, { $set: data });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -33,11 +33,11 @@ noteModel.updateNote = (uid: string, data: any, noteCollection: any) => {
 };
 
 // delete note
-noteModel.deleteNote = (data: any, noteCollection: any) => {
+noteModel.deleteNote = (uid: string, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('delete note');
-      const deleteItem = noteCollection.deleteMany(data);
+      const deleteItem = noteCollection.deleteMany({ uid: uid });
       resolve(deleteItem);
     } catch (err) {
       console.log(err);
@@ -50,8 +50,28 @@ noteModel.deleteNote = (data: any, noteCollection: any) => {
 noteModel.getNote = (data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log('get event');
-      const res = await noteCollection.findOne({ sender: data.sender }, { _id: 0 });
+      console.log('get note');
+      noteCollection
+        .find({
+          sender: data.sender
+        })
+        .project({ _id: 0 })
+        .toArray()
+        .then((note: any) => {
+          resolve(note);
+        })
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};
+
+noteModel.getNoteByUid = (uid: string, noteCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get note');
+      const res = noteCollection.findOne({ uid: uid });
       resolve(res);
     } catch (err) {
       console.log(err);

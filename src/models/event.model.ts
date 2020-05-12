@@ -23,7 +23,7 @@ eventModel.updateEvent = (uid: string, data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update Event');
-      const res = await eventCollection.updateOne({ UID: uid }, { $set: data });
+      const res = await eventCollection.updateOne({ uid: uid }, { $set: data });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -33,11 +33,11 @@ eventModel.updateEvent = (uid: string, data: any, eventCollection: any) => {
 };
 
 // delete event
-eventModel.deleteEvent = (data: any, eventCollection: any) => {
+eventModel.deleteEvent = (uid: string, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('delete event');
-      const deleteItem = eventCollection.deleteMany(data);
+      const deleteItem = eventCollection.deleteMany({ uid: uid });
       resolve(deleteItem);
     } catch (err) {
       console.log(err);
@@ -51,7 +51,27 @@ eventModel.getEvent = (data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('get event');
-      const res = await eventCollection.findOne({ sip_id: data.sip_id }, { _id: 0 });
+      eventCollection
+        .find({
+          sip_id: data.sip_id
+        })
+        .project({ _id: 0 })
+        .toArray()
+        .then((event: any) => {
+          resolve(event);
+        })
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};
+
+eventModel.getEventByUid = (uid: string, eventCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get event');
+      const res = eventCollection.findOne({ uid: uid });
       resolve(res);
     } catch (err) {
       console.log(err);

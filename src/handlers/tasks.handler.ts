@@ -29,6 +29,7 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     data.last_modified = req.body.last_modified;
     data.completed_when = req.body.completed_when;
     data.fmttype = req.body.fmttype;
+    data.uid = req.body.uid;
     data.attendee = req.body.attendee;
     data.dtstart = req.body.dtstart;
     data.dtend = req.body.dtend;
@@ -51,20 +52,24 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     stanzaData.from = data.owner_id;
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
-
-    const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
-
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    await tasksModel.createTasks(data, tasksCollection);
-    console.log(stanzaData);
-    const messageService = new MessageService();
-    const sendMessageResult = await messageService.sendStanza(stanzaData);
-    console.log(sendMessageResult);
-    if (sendMessageResult === 0) {
-      res.send({ status_code: 200, message: 'Tasks sent successfully' });
+    const getTasks = await tasksModel.getTaskByUid(data.uid, tasksCollection);
+    if (getTasks === null) {
+      const body = JSON.stringify(data);
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+
+      await tasksModel.createTasks(data, tasksCollection);
+      console.log(stanzaData);
+      const messageService = new MessageService();
+      const sendMessageResult = await messageService.sendStanza(stanzaData);
+      console.log(sendMessageResult);
+      if (sendMessageResult === 0) {
+        res.send({ status_code: 200, message: 'Task sent successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Task sent failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Tasks sent failed' });
+      res.send({ status_code: 200, message: `Task uid: [${data.uid}] Already exist!` });
     }
   } catch (err) {
     console.log(err);
@@ -119,18 +124,22 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    const getTasks = await tasksModel.getTasks(data, tasksCollection);
-    const body = JSON.stringify(data);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
-    await tasksModel.updateTasks(uid, data, tasksCollection);
-    console.log(stanzaData);
-    const messageService = new MessageService();
-    const sendMessageResult = await messageService.sendStanza(stanzaData);
-    console.log(sendMessageResult);
-    if (sendMessageResult === 0) {
-      res.send({ status_code: 200, message: 'Tasks sent successfully' });
+    const getTasks = await tasksModel.getTaskByUid(uid, tasksCollection);
+    if (getTasks !== null) {
+      const body = JSON.stringify(data);
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+      await tasksModel.updateTasks(uid, data, tasksCollection);
+      console.log(stanzaData);
+      const messageService = new MessageService();
+      const sendMessageResult = await messageService.sendStanza(stanzaData);
+      console.log(sendMessageResult);
+      if (sendMessageResult === 0) {
+        res.send({ status_code: 200, message: 'Task sent successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Task sent failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Tasks sent failed' });
+      res.send({ status_code: 200, message: `Task uid: [${uid}] not found` });
     }
     //
   } catch (err) {
@@ -149,7 +158,7 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
     //
-    data.uid = req.body.uid;
+    const uid = req.body.uid;
     data.owner_id = req.body.owner_id;
     data.sip_id = req.body.sip_id;
     data.group_id = req.body.group_id;
@@ -161,14 +170,18 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
     stanzaData.to = data.receiver;
     const chatType = data.group_id ? 'groupchat' : 'chat';
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    const getTasks = await tasksModel.getTasks(data, tasksCollection);
-    stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
-    //
-    const deleteRes = await tasksModel.deleteTasks(data, tasksCollection);
-    if (deleteRes.deletedCount > 0) {
-      res.send({ status_code: 200, message: 'Task deleted successfully' });
+    const getTasks = await tasksModel.getTaskByUid(uid, tasksCollection);
+    if (getTasks !== null) {
+      stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><bodyThe Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+      //
+      const deleteRes = await tasksModel.deleteTasks(uid, tasksCollection);
+      if (deleteRes.deletedCount > 0) {
+        res.send({ status_code: 200, message: 'Task deleted successfully' });
+      } else {
+        res.send({ status_code: 200, message: 'Task delete failed' });
+      }
     } else {
-      res.send({ status_code: 200, message: 'Task delete failed' });
+      res.send({ status_code: 200, message: `Task uid: [${uid}] not found` });
     }
   } catch (err) {
     console.log(err);
@@ -179,10 +192,9 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
 // getTasks
 tasksHandler.getTasks = async function (req: any, res: any, done: any) {
   try {
-    const data: any = {};
-    data.sip_id = req.params.sip_id;
+    const sip_id = req.params.sip_id;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    const getTasks = await tasksModel.getTasks(data, tasksCollection);
+    const getTasks = await tasksModel.getTasks(sip_id, tasksCollection);
     res.send({ status_code: 200, result: getTasks });
 
   } catch (err) {

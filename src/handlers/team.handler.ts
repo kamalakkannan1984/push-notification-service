@@ -369,7 +369,7 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
     const teamMemberFrom = data.fromJid.split('@');
     const teamMemberTo = data.toJid.split('@');
     const recordFrom = await userModel.getUserById(teamMemberFrom[0]);
-    const recordTo = await userModel.getUserById(teamMemberFrom[0]);
+    const recordTo = await userModel.getUserById(teamMemberTo[0]);
     if (recordFrom.length === 1 && recordTo.length === 1) {
       const team = data.name.match(/\d+/g);
       memberData.team_id = team[0];
@@ -428,7 +428,7 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
     const teamMemberFrom = data.fromJid.split('@');
     const teamMemberTo = data.toJid.split('@');
     const recordFrom = await userModel.getUserById(teamMemberFrom[0]);
-    const recordTo = await userModel.getUserById(teamMemberFrom[0]);
+    const recordTo = await userModel.getUserById(teamMemberTo[0]);
     if (recordFrom.length === 1 && recordTo.length === 1) {
       const team = data.name.match(/\d+/g);
       memberData.team_id = team[0];

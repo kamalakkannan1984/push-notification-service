@@ -23,7 +23,7 @@ tasksModel.updateTasks = (uid: string, data: any, tasksCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update tasks');
-      const res = await tasksCollection.updateOne({ UID: uid }, { $set: data });
+      const res = await tasksCollection.updateOne({ uid: uid }, { $set: data });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -33,11 +33,11 @@ tasksModel.updateTasks = (uid: string, data: any, tasksCollection: any) => {
 };
 
 // delete tasks
-tasksModel.deleteTasks = (data: any, tastsCollection: any) => {
+tasksModel.deleteTasks = (uid: string, tastsCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('delete tasks');
-      const deleteItem = tastsCollection.deleteMany(data);
+      const deleteItem = tastsCollection.deleteMany({ uid: uid });
       resolve(deleteItem);
     } catch (err) {
       console.log(err);
@@ -47,11 +47,31 @@ tasksModel.deleteTasks = (data: any, tastsCollection: any) => {
 };
 
 // getTasks
-tasksModel.getTasks = (data: any, tastsCollection: any) => {
+tasksModel.getTasks = (sip_id: string, tastsCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('get tasks');
-      const res = await tastsCollection.findOne({ sip_id: data.sip_id }, { _id: 0 });
+      tastsCollection
+        .find({
+          sip_id: sip_id
+        })
+        .project({ _id: 0 })
+        .toArray()
+        .then((tasks: any) => {
+          resolve(tasks);
+        })
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+};
+
+tasksModel.getTaskByUid = (uid: string, tastsCollection: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('get task');
+      const res = tastsCollection.findOne({ uid: uid });
       resolve(res);
     } catch (err) {
       console.log(err);
