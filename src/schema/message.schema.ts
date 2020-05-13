@@ -34,5 +34,22 @@ message.sendStanza = {
   },
 };
 
+//
+/*data.user = req.body.user;
+    data.host = req.body.host;
+    data.resource = req.body.resource;
+    data.stanza = req.body.stanza;*/
+message.sendStanzaC2s = {
+  body: {
+    type: 'object',
+    properties: {
+      user: { type: 'string' },
+      host: { type: 'string' },
+      resource: { type: 'string' },
+      stanza: { type: 'string' },
+    },
+    required: ['user', 'host', 'resource', 'stanza'],
+  },
+};
 /* ######################################################################################## */
 export const messageSchema = message;

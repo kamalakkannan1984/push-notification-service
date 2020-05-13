@@ -546,11 +546,24 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
       schema: {
         description: 'remove member Api',
         tags: ['team'],
-        body: teamHandlers.removeMember.body,
+        body: teamSchema.removeMember.body,
         // response: userSchema.createTeamRes
       },
     },
     teamHandlers.removeMember,
+  );
+
+  fastify.post('/api/send_stanza_c2s',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'send_stanza_c2s Api',
+        tags: ['message'],
+        body: messageSchema.sendStanzaC2s.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    messageHandlers.sendStanzaC2s,
   );
   done();
 };

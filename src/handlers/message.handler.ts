@@ -124,4 +124,25 @@ messageHandler.clearCache = async function (req: any, res: any, done: any) {
   }
 };
 
+//sendStanzaC2s
+messageHandler.sendStanzaC2s = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.user = req.body.user;
+    data.host = req.body.host;
+    data.resource = req.body.resource;
+    data.stanza = req.body.stanza;
+    const messageService = new MessageService();
+    const sendMessageResult = await messageService.sendStanzaC2s(data);
+    console.log(sendMessageResult);
+    if (sendMessageResult === 0) {
+      res.send({ status_code: 200, message: 'Message sent successfully' });
+    } else {
+      res.send({ status_code: 200, message: 'Message sent failed' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
 export const messageHandlers: any = messageHandler;

@@ -181,6 +181,29 @@ class Message {
       }
     });
   }
+  /**
+ * sendStanzaC2s
+ */
+  public sendStanzaC2s(data: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/send_stanza_c2s`, data)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      } catch (err) {
+        console.log(err);
+        reject(err);
+      }
+    });
+  }
 }
+
+
 
 export default Message;

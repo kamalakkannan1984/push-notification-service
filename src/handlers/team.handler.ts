@@ -398,7 +398,7 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
         messageData.body = recordFrom[0].caller_id + ' Added you';
         await messageService.sendMessage(messageData);
         messageData.to = teamData.name + '@' + teamData.service;
-        messageData.body = recordFrom[0].caller_id + ' Added' + recordTo[0].caller_id;
+        messageData.body = recordFrom[0].caller_id + ' Added ' + recordTo[0].caller_id;
         await messageService.sendMessage(messageData);
         res.send({ status_code: 200, message: 'Member added successfully' });
       } else {
@@ -445,7 +445,7 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
         messageData.body = recordFrom[0].caller_id + ' Removed you';
         await messageService.sendMessage(messageData);
         messageData.to = teamData.name + '@' + teamData.service;
-        messageData.body = recordFrom[0].caller_id + ' Removed' + recordTo[0].caller_id;
+        messageData.body = recordFrom[0].caller_id + ' Removed ' + recordTo[0].caller_id;
         await messageService.sendMessage(messageData);
         removeMember.name = req.body.name;
         removeMember.service = req.body.service;
