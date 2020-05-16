@@ -108,7 +108,7 @@ userModel.saveCreateTeam = (data: any) => {
         const request = new sql.Request(pool);
         const dataArr = data;
         request.input('company_id', sql.Int, dataArr.company_id);
-        request.input('team_id', sql.Int, 0);
+        request.input('team_id', sql.Int, dataArr.team_id);
         request.input('team_name', sql.Text, dataArr.team_name);
         request.input('team_type', sql.Int, dataArr.team_type);
         request.input('description', sql.Text, dataArr.description);

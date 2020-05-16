@@ -21,6 +21,7 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
     data.company_id = req.body.company_id;
+    data.team_id = 0;
     data.team_name = req.body.team_name;
     data.team_type = req.body.team_type;
     data.description = req.body.description;
@@ -127,7 +128,6 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
 teamHandler.updateTeam = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.team_id = req.params.team_id;
     data.company_id = req.body.company_id;
     data.team_name = req.body.team_name;
     data.team_type = req.body.team_type;
@@ -146,13 +146,16 @@ teamHandler.updateTeam = async function (req: any, res: any, done: any) {
     const teamService = new TeamService();
     const messageService = new MessageService();
     const record = await userModel.getUserById(data.created_by);
-    const recordTeam = await userModel.getTeamInfo(data.company_id, data.team_id, data.created_by);
+    const team_id = req.params.team_id;
+    const team = team_id.match(/\d+/g);
+    data.team_id = team[0];
+    const recordTeam = await userModel.getTeamInfo(data.company_id, team[0], data.created_by);
     if (record.length === 1 && recordTeam.length === 1) {
       const recordsets = await userModel.saveCreateTeam(data);
       console.log(recordsets);
       if (recordsets.errcode === 0) {
         const teamOptionData: any = {};
-        teamOptionData.name = data.team_id_prefix + recordsets.team_id;
+        teamOptionData.name = team_id;
         teamOptionData.service = 'conference.im01.unifiedring.co.uk';
         teamOptionData.option = 'title';
         teamOptionData.value = data.team_name;

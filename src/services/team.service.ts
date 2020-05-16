@@ -227,7 +227,6 @@ class Team {
         return await axios
           .post(`https://${this.host}:${this.port}/${this.prefix}/change_room_option`, data)
           .then((response) => {
-            console.log(response);
             resolve(response.data);
           })
           .catch((error) => {
