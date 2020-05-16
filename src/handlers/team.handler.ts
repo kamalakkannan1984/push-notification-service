@@ -267,7 +267,7 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
       messageData.from = data.jid;
       messageData.to = data.name + '@' + data.service;
       messageData.subject = '';
-      messageData.body = record[0].caller_id + ' left';
+      messageData.body = record[0].caller_id + ' has left';
       const team = data.name.match(/\d+/g);
       if (team !== null) {
         data.team = team[0];
@@ -319,6 +319,13 @@ teamHandler.roleChange = async function (req: any, res: any, done: any) {
     data.service = req.body.service;
     data.jid = req.body.jid;
     data.affiliation = req.body.role;
+    const teamData: any = {};
+    const team = data.name.match(/\d+/g);
+    const teamMember = data.jid.split('@');
+    teamData.team_id = team[0];
+    teamData.SIPID = teamMember[0];
+    teamData.make_admin = data.affiliation === 'member' ? 0 : 1;
+    await userModel.roleChange(teamData);
     const teamService = new TeamService();
     const setRoomAffiliationsResult = await teamService.setRoomAffiliation(data);
     console.log(setRoomAffiliationsResult);
@@ -393,11 +400,11 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
         const messageData: any = {};
         messageData.type = 'chat';
         messageData.from = data.fromJid;
-        messageData.to = data.toJid;
-        messageData.subject = '';
-        messageData.body = recordFrom[0].caller_id + ' Added you';
-        await messageService.sendMessage(messageData);
         messageData.to = teamData.name + '@' + teamData.service;
+        messageData.subject = '';
+        //messageData.body = recordFrom[0].caller_id + ' Added you';
+        //await messageService.sendMessage(messageData);
+        //messageData.to = teamData.name + '@' + teamData.service;
         messageData.body = recordFrom[0].caller_id + ' Added ' + recordTo[0].caller_id;
         await messageService.sendMessage(messageData);
         res.send({ status_code: 200, message: 'Member added successfully' });
@@ -419,7 +426,6 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
     const data: any = {};
     const memberData: any = {};
     const removeMember: any = {};
-    const teamData: any = {};
     data.company_id = req.body.company_id;
     data.name = req.body.name;
     data.service = req.body.service;
@@ -440,11 +446,11 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
         const messageData: any = {};
         messageData.type = 'chat';
         messageData.from = data.fromJid;
-        messageData.to = data.toJid;
+        messageData.to = data.name + '@' + data.service;
         messageData.subject = '';
-        messageData.body = recordFrom[0].caller_id + ' Removed you';
-        await messageService.sendMessage(messageData);
-        messageData.to = teamData.name + '@' + teamData.service;
+        //messageData.body = recordFrom[0].caller_id + ' Removed you';
+        //await messageService.sendMessage(messageData);
+        //messageData.to = data.name + '@' + data.service;
         messageData.body = recordFrom[0].caller_id + ' Removed ' + recordTo[0].caller_id;
         await messageService.sendMessage(messageData);
         removeMember.name = req.body.name;

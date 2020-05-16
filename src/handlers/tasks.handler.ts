@@ -69,7 +69,7 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Tasks';
+        msgdata.subject = 'TASKS';
         msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -150,7 +150,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Tasks';
+        msgdata.subject = 'TASKS';
         msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -204,7 +204,7 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Tasks';
+        msgdata.subject = 'TASKS';
         msgdata.body = 'The Message has been deleted';
         sendMessageResult = await messageService.sendMessage(msgdata);
       }

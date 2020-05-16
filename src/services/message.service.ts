@@ -27,7 +27,8 @@ class Message {
     return new Promise(async (resolve, reject) => {
       try {
         // client.sendMessage(type, from, to, subject, body)
-        return await this.client
+        console.log(data);
+        /*return await this.client
           .sendMessage(data.type, data.from, data.to, data.subject, data.body)
           .then((result: any) => {
             console.log(result);
@@ -36,6 +37,21 @@ class Message {
           .catch((err: any) => {
             console.log(err.response);
             reject(err.response.data);
+          });*/
+        const dataArr: any = {};
+        dataArr.type = data.type;
+        dataArr.from = data.from;
+        dataArr.to = data.to;
+        dataArr.subject = data.subject;
+        dataArr.body = data.body
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/send_message`, dataArr)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
           });
       } catch (err) {
         console.log(err);
@@ -51,7 +67,7 @@ class Message {
     return new Promise(async (resolve, reject) => {
       try {
         // client.sendStanza(from, to, stanza)
-        return await this.client
+        /*return await this.client
           .sendStanza(data.from, data.to, data.stanza)
           .then((result: any) => {
             resolve(result);
@@ -59,6 +75,20 @@ class Message {
           .catch((err: any) => {
             console.log(err);
             reject(err.response.data);
+          });*/
+        const dataArr: any = {};
+        dataArr.from = data.from;
+        dataArr.to = data.to;
+        dataArr.stanza = data.stanza;
+        console.log(dataArr);
+        return await axios
+          .post(`https://${this.host}:${this.port}/${this.prefix}/send_stanza`, dataArr)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
           });
       } catch (err) {
         console.log(err);

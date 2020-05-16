@@ -49,7 +49,7 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Note';
+        msgdata.subject = 'NOTE';
         msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -110,7 +110,7 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Note';
+        msgdata.subject = 'NOTE';
         msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -166,7 +166,7 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Note';
+        msgdata.subject = 'NOTE';
         msgdata.body = 'The Message has been deleted';
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -192,11 +192,6 @@ noteHandler.getNote = async function (req: any, res: any, done: any) {
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNote(data, noteCollection);
     res.send({ status_code: 200, result: result });
-    /*if (deleteRes.deletedCount > 0) {
-      res.send({ status_code: 200, message: 'Note deleted successfully' });
-    } else {
-      res.send({ status_code: 200, message: 'Note delete failed' });
-    }*/
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });

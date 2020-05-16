@@ -240,4 +240,32 @@ userModel.addRemoveMember = (data: any) => {
     }
   });
 };
+
+//role change
+
+userModel.roleChange = (data: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(data);
+      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
+      pool.connect().then(() => {
+        const request = new sql.Request(pool);
+        request.input('team_id', sql.Int, data.team_id);
+        request.input('SIPID', sql.Text, data.SIPID);
+        request.input('make_admin', sql.Int, data.make_admin);
+        request.execute('ur_app_create_team_member_admin', (err: any, result: any) => {
+          // ... error checks
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          console.log(result);
+          resolve(result.recordset);
+        });
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 // module.exports = userModel;

@@ -67,8 +67,9 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Event';
+        msgdata.subject = 'EVENT';
         msgdata.body = body;
+        console.log(msgdata);
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
       console.log(sendMessageResult);
@@ -149,7 +150,7 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Event';
+        msgdata.subject = 'EVENT';
         msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
@@ -203,7 +204,7 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
-        msgdata.subject = 'Event';
+        msgdata.subject = 'EVENT';
         msgdata.body = 'The Message has been deleted';
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
