@@ -113,7 +113,7 @@ userModel.saveCreateTeam = (data: any) => {
         request.input('team_type', sql.Int, dataArr.team_type);
         request.input('description', sql.Text, dataArr.description);
         request.input('created_by', sql.Int, dataArr.created_by);
-        request.input('processtype', sql.Int, 1);
+        request.input('processtype', sql.Int, dataArr.processtype);
         request.input('except_guest', sql.Int, dataArr.except_guest);
         request.input('post_msg', sql.Int, dataArr.post_msg);
         request.input('mention', sql.Int, dataArr.mention);

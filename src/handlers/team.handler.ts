@@ -123,6 +123,71 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
   }
 };
 
+// updateTeam
+teamHandler.updateTeam = async function (req: any, res: any, done: any) {
+  try {
+    const data: any = {};
+    data.team_id = req.params.team_id;
+    data.company_id = req.body.company_id;
+    data.team_name = req.body.team_name;
+    data.team_type = req.body.team_type;
+    data.description = req.body.description;
+    data.created_by = req.body.created_by;
+    data.processtype = 2;
+    data.except_guest = req.body.except_guest;
+    data.post_msg = req.body.post_msg;
+    data.mention = req.body.mention;
+    data.integration = req.body.integration;
+    data.pin_post = req.body.pin_post;
+    data.add_members = req.body.add_members;
+    data.team_guid = req.body.team_guid;
+    data.photo_info = req.body.photo_info;
+    data.team_id_prefix = 'con';
+    const teamService = new TeamService();
+    const messageService = new MessageService();
+    const record = await userModel.getUserById(data.created_by);
+    const recordTeam = await userModel.getTeamInfo(data.company_id, data.team_id, data.created_by);
+    if (record.length === 1 && recordTeam.length === 1) {
+      const recordsets = await userModel.saveCreateTeam(data);
+      console.log(recordsets);
+      if (recordsets.errcode === 0) {
+        const teamOptionData: any = {};
+        teamOptionData.name = data.team_id_prefix + recordsets.team_id;
+        teamOptionData.service = 'conference.im01.unifiedring.co.uk';
+        teamOptionData.option = 'title';
+        teamOptionData.value = data.team_name;
+        await teamService.changeRoomOption(teamOptionData);
+        teamOptionData.option = 'description';
+        teamOptionData.value = data.description;
+        await teamService.changeRoomOption(teamOptionData);
+
+        const messageData: any = {};
+        messageData.type = 'chat';
+        messageData.from = data.created_by + '@im01.unifiedring.co.uk';
+        messageData.to = teamOptionData.name + '@' + teamOptionData.service;
+        messageData.subject = '';
+        messageData.body = `${record[0].caller_id} changed the title from  ${recordTeam[0].team_name} to ${data.team_name}`;
+        await messageService.sendMessage(messageData);
+
+        messageData.to = teamOptionData.name + '@' + teamOptionData.service / data.created_by;
+        messageData.body = `You changed title to ${data.team_name}`;
+        await messageService.sendMessage(messageData);
+
+        res.send({ status_code: 200, message: 'Team updated successfully' });
+      } else {
+        // failed case
+        res.send({ status_code: 404, message: recordsets.errmsg });
+      }
+    } else {
+      res.send({ status_code: 404, message: 'Team or User not found' });
+    }
+  } catch (err) {
+    console.log('ERROR');
+    console.log(err);
+    res.send({ status_code: 500, message: 'internal server error' });
+  }
+};
+
 // createTeamWithOpts
 teamHandler.createTeamWithOpts = async function (req: any, res: any, done: any) {
   try {
@@ -257,7 +322,7 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
     data.affiliation = 'none';
     data.company_id = req.body.company_id;
     const teamMember = data.jid.split('@');
-    data.SIPID = parseInt(teamMember[0]);
+    data.SIPID = parseInt(teamMember[0], undefined);
     const messageService = new MessageService();
     const teamService = new TeamService();
     const record = await userModel.getUserById(teamMember[0]);

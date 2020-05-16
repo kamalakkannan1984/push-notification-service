@@ -135,6 +135,21 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     teamHandlers.createTeam,
   );
 
+  fastify.put(
+    '/api/update_team/:team_id',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Update team api',
+        tags: ['team'],
+        params: teamSchema.updateTeamReq.params,
+        body: teamSchema.updateTeamReq.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    teamHandlers.updateTeam,
+  );
+
   fastify.post(
     '/api/create_room_with_opts',
     {
@@ -462,11 +477,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     noteHandlers.deleteNote,
   );
-  //old message delete
-  /*- "delete_old_messages"
-      - "delete_old_mam_messages"
-      - "delete_expired_messages"
-      - "clear_cache" */
+
   fastify.post(
     '/api/delete_old_messages',
     {
@@ -553,7 +564,8 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     teamHandlers.removeMember,
   );
 
-  fastify.post('/api/send_stanza_c2s',
+  fastify.post(
+    '/api/send_stanza_c2s',
     {
       preValidation: [fastify.validateSession],
       schema: {

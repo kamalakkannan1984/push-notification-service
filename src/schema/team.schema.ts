@@ -29,6 +29,36 @@ team.createTeamReq = {
   },
 };
 
+// Update team
+team.updateTeamReq = {
+  params: {
+    type: 'object',
+    properties: {
+      team_id: { type: 'string' },
+    },
+    required: ['team_id'],
+  },
+  body: {
+    type: 'object',
+    properties: {
+      company_id: { type: 'number' },
+      team_name: { type: 'string' },
+      team_type: { type: 'number' },
+      description: { type: 'string' },
+      created_by: { type: 'number' },
+      except_guest: { type: 'number' },
+      post_msg: { type: 'number' },
+      mention: { type: 'number' },
+      integration: { type: 'number' },
+      pin_post: { type: 'number' },
+      add_members: { type: 'string' },
+      team_guid: { type: 'string' },
+      photo_info: { type: 'string' },
+    },
+    required: ['company_id', 'team_name', 'description', 'add_members', 'created_by'],
+  },
+};
+
 team.createTeamRes = {
   200: {
     type: 'object',
@@ -39,19 +69,8 @@ team.createTeamRes = {
     },
   },
 };
+
 // Create team with options
-/*
-  {
-        'name': 'room1',
-        'service': 'muc.example.com',
-        'host': 'localhost',
-        'options': [
-          {
-            'name': 'members_only',
-            'value': 'true'
-          }
-        ]
-      }*/
 team.createTeamWithOptsReq = {
   body: {
     type: 'object',
@@ -85,13 +104,7 @@ team.unsubscribeRoomReq = {
 };
 
 // getTeamInfo
-/*
-  {
-      'company_id': 1698,
-      'team_id': 31,
-      'extension': 528
-  }
-  */
+
 team.getTeamInfo = {
   body: {
     type: 'object',
@@ -105,8 +118,6 @@ team.getTeamInfo = {
 };
 
 // destroyRoom
-/*'name': 'room1',
-      'service': 'muc.example.com'*/
 team.destroyRoom = {
   body: {
     type: 'object',
@@ -171,9 +182,7 @@ team.addMember = {
   },
 };
 
-/* {"company_id":"1698","name":"con764","service":"conference.im01.unifiedring.co.uk”,
-”fromJid":”2334@im01.unifiedring.co.uk”,”toJid":"2336@im01.unifiedring.co.uk"}*/
-//remove member
+// remove member
 team.removeMember = {
   body: {
     type: 'object',
