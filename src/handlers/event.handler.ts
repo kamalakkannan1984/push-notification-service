@@ -98,6 +98,7 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     //
     const uid = req.params.uid;
     const data: any = {};
+    data.uid = uid;
     data.summary = req.body.summary;
     data.duration = req.body.duration;
     data.repeat_type = req.body.repeat_type;
@@ -131,12 +132,13 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     data.company_id = req.body.company_id;
 
     const chatType = data.group_id ? 'groupchat' : 'chat';
-    const body = JSON.stringify(data);
-    //    
+
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     const result = await eventModel.getEventByUid(uid, eventCollection);
     if (result !== null) {
       await eventModel.updateEvent(uid, data, eventCollection);
+      data.replace_id = result.msgid;
+      const body = JSON.stringify(data);
       const messageService = new MessageService();
       let sendMessageResult;
       const msgdata: any = {};
@@ -201,11 +203,17 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>The Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        const body = JSON.stringify({
+          isDeleted: true,
+          msg: 'The Message has been deleted',
+          uid: uid,
+          deletedId: result.msgid
+        });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
         msgdata.subject = 'EVENT';
-        msgdata.body = 'The Message has been deleted';
+        msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
       if (deleteRes.deletedCount > 0) {
@@ -225,7 +233,7 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
 eventHandler.getEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.sip_id = req.params.sip_id;
+    data.sender = req.params.sender;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     const result = await eventModel.getEvent(data, eventCollection);
     res.send({ status_code: 200, result: result });

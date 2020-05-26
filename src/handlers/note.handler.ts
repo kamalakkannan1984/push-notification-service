@@ -79,6 +79,7 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
 
     const uid = req.params.uid;
     const data: any = {};
+    data.uid = uid;
     data.description = req.body.description;
     data.summary = req.body.summary;
     data.dtdtart = req.body.dtstart;
@@ -97,6 +98,7 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
     if (result !== null) {
       await noteModel.updateNote(uid, data, noteCollection);
       const body = JSON.stringify(data);
+      data.replace_id = result.msgid;
       const messageService = new MessageService();
       let sendMessageResult;
       const msgdata: any = {};
@@ -105,6 +107,7 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+        console.log(stanzaData);
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
         msgdata.type = chatType;
@@ -112,6 +115,7 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
         msgdata.to = data.receiver;
         msgdata.subject = 'NOTE';
         msgdata.body = body;
+        console.log(msgdata);
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
       if (sendMessageResult === 0) {
@@ -161,13 +165,21 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>The Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${result.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
+        console.log(stanzaData);
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        const body = JSON.stringify({
+          isDeleted: true,
+          msg: 'The Message has been deleted',
+          uid: uid,
+          deletedId: result.msgid
+        });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
         msgdata.subject = 'NOTE';
-        msgdata.body = 'The Message has been deleted';
+        msgdata.body = body;
+        console.log(msgdata);
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
       if (deleteRes.deletedCount > 0) {
@@ -187,7 +199,7 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
 //getNote
 noteHandler.getNote = async function (req: any, res: any, done: any) {
   try {
-    const data: any = {};
+    let data: any = {};
     data.sender = req.params.sender;
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNote(data, noteCollection);

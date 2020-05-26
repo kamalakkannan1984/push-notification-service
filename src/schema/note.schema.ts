@@ -77,7 +77,7 @@ note.deleteNote = {
 
 // getNote
 note.getNote = {
-  params: {
+  body: {
     type: 'object',
     properties: {
       sender: { type: 'string' },

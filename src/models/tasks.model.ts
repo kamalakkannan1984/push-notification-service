@@ -47,13 +47,17 @@ tasksModel.deleteTasks = (uid: string, tastsCollection: any) => {
 };
 
 // getTasks
-tasksModel.getTasks = (sip_id: string, tastsCollection: any) => {
+tasksModel.getTasks = (sender: string, tastsCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('get tasks');
       tastsCollection
         .find({
-          sip_id: sip_id
+          $or: [{
+            "sender": sender
+          }, {
+            "receiver": sender
+          }]
         })
         .project({ _id: 0 })
         .toArray()

@@ -99,6 +99,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     //
     const uid = req.params.uid;
     const data: any = {};
+    data.uid = uid;
     data.summary = req.body.summary;
     data.duration = req.body.duration;
     /*data.REPEATTYPE = req.body.repeat_type;
@@ -136,6 +137,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     if (getTasks !== null) {
       await tasksModel.updateTasks(uid, data, tasksCollection);
       const messageService = new MessageService();
+      data.replace_id = getTasks.msgid;
       const body = JSON.stringify(data);
       let sendMessageResult;
       const msgdata: any = {};
@@ -201,11 +203,17 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>The Message has been deleted</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><replace id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><deleted id="${getTasks.msgid}" xmlns="urn:xmpp:message-correct:0"/><message-type value="TASKS" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        const body = JSON.stringify({
+          isDeleted: true,
+          msg: 'The Message has been deleted',
+          uid: uid,
+          deletedId: getTasks.msgid
+        });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
         msgdata.subject = 'TASKS';
-        msgdata.body = 'The Message has been deleted';
+        msgdata.body = body;
         sendMessageResult = await messageService.sendMessage(msgdata);
       }
       const deleteRes = await tasksModel.deleteTasks(uid, tasksCollection);
@@ -226,9 +234,9 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
 // getTasks
 tasksHandler.getTasks = async function (req: any, res: any, done: any) {
   try {
-    const sip_id = req.params.sip_id;
+    const sender = req.params.sender;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    const getTasks = await tasksModel.getTasks(sip_id, tasksCollection);
+    const getTasks = await tasksModel.getTasks(sender, tasksCollection);
     res.send({ status_code: 200, result: getTasks });
   } catch (err) {
     console.log(err);

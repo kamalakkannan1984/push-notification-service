@@ -146,10 +146,12 @@ teamHandler.updateTeam = async function (req: any, res: any, done: any) {
     const teamService = new TeamService();
     const messageService = new MessageService();
     const record = await userModel.getUserById(data.created_by);
+    console.log(record);
     const team_id = req.params.team_id;
     const team = team_id.match(/\d+/g);
     data.team_id = team[0];
     const recordTeam = await userModel.getTeamInfo(data.company_id, team[0], data.created_by);
+    console.log(recordTeam);
     if (record.length === 1 && recordTeam.length === 1) {
       const recordsets = await userModel.saveCreateTeam(data);
       console.log(recordsets);
@@ -167,13 +169,14 @@ teamHandler.updateTeam = async function (req: any, res: any, done: any) {
         const messageData: any = {};
         messageData.type = 'chat';
         messageData.from = data.created_by + '@im01.unifiedring.co.uk';
-        messageData.to = teamOptionData.name + '@' + teamOptionData.service;
+        messageData.to = `${teamOptionData.name}@${teamOptionData.service}`;
         messageData.subject = '';
         messageData.body = `${record[0].caller_id} changed the title from  ${recordTeam[0].team_name} to ${data.team_name}`;
         await messageService.sendMessage(messageData);
 
-        messageData.to = teamOptionData.name + '@' + teamOptionData.service / data.created_by;
+        messageData.to = `${teamOptionData.name}@${teamOptionData.service}/${data.created_by}`;
         messageData.body = `You changed title to ${data.team_name}`;
+        console.log(messageData);
         await messageService.sendMessage(messageData);
 
         res.send({ status_code: 200, message: 'Team updated successfully' });

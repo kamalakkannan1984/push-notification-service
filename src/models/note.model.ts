@@ -53,7 +53,11 @@ noteModel.getNote = (data: any, noteCollection: any) => {
       console.log('get note');
       noteCollection
         .find({
-          sender: data.sender
+          $or: [{
+            "sender": data.sender
+          }, {
+            "receiver": data.sender
+          }]
         })
         .project({ _id: 0 })
         .toArray()

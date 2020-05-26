@@ -109,12 +109,12 @@ tasks.deleteTasks = {
 
 //getTasks
 tasks.getTasks = {
-  params: {
+  body: {
     type: 'object',
     properties: {
-      sip_id: { type: 'string' },
+      sender: { type: 'string' },
     },
-    required: ['sip_id'],
+    required: ['sender'],
   },
 };
 

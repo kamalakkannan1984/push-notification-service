@@ -53,7 +53,11 @@ eventModel.getEvent = (data: any, eventCollection: any) => {
       console.log('get event');
       eventCollection
         .find({
-          sip_id: data.sip_id
+          $or: [{
+            "sender": data.sender
+          }, {
+            "receiver": data.sender
+          }]
         })
         .project({ _id: 0 })
         .toArray()
