@@ -233,7 +233,7 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
 eventHandler.getEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.sender = req.params.sender;
+    data.sender = req.params.sender_or_receiver;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     const result = await eventModel.getEvent(data, eventCollection);
     res.send({ status_code: 200, result: result });

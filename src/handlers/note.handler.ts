@@ -200,7 +200,7 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
 noteHandler.getNote = async function (req: any, res: any, done: any) {
   try {
     let data: any = {};
-    data.sender = req.params.sender;
+    data.sender = req.params.sender_or_receiver;
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNote(data, noteCollection);
     res.send({ status_code: 200, result: result });

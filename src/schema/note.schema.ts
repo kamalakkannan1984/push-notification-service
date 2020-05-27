@@ -80,9 +80,9 @@ note.getNote = {
   body: {
     type: 'object',
     properties: {
-      sender: { type: 'string' },
+      sender_or_receiver: { type: 'string' },
     },
-    required: ['sender'],
+    required: ['sender_or_receiver'],
   },
 };
 /* ######################################################################################## */
