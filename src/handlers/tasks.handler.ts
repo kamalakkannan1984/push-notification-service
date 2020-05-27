@@ -234,7 +234,7 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
 // getTasks
 tasksHandler.getTasks = async function (req: any, res: any, done: any) {
   try {
-    const sender = req.params.sender_or_receiver;
+    const sender = req.body.sender_or_receiver;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     const getTasks = await tasksModel.getTasks(sender, tasksCollection);
     res.send({ status_code: 200, result: getTasks });
