@@ -66,7 +66,7 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
           },
           {
             name: 'public',
-            value: 'false',
+            value: data.team_type === 1 ? 'true' : 'false',
           },
           {
             name: 'persistent',
@@ -171,7 +171,10 @@ teamHandler.updateTeam = async function (req: any, res: any, done: any) {
         await teamService.changeRoomOption(teamOptionData);
         teamOptionData.option = 'vcard';
         teamOptionData.value = `<vCard xmlns='vcard-temp'><PHOTO><BINVAL>${data.photo_info}</BINVAL><TYPE>image/jpeg</TYPE></PHOTO></vCard>`;
-        console.log(teamOptionData);
+
+        await teamService.changeRoomOption(teamOptionData);
+        teamOptionData.option = 'public';
+        teamOptionData.value = data.team_type === 1 ? 'true' : 'false';
         await teamService.changeRoomOption(teamOptionData);
 
         const messageData: any = {};

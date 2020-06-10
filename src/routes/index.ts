@@ -12,6 +12,8 @@ import { eventSchema } from '../schema/event.schema';
 import { tasksSchema } from '../schema/tasks.schema';
 import { noteSchema } from '../schema/note.schema';
 
+import { callHistorySchema } from '../schema/callHistory.schema';
+
 import { userHandlers } from '../handlers/user.handler';
 import { healthHandlers } from '../handlers/health.handler';
 import { teamHandlers } from '../handlers/team.handler';
@@ -20,6 +22,8 @@ import { messageHandlers } from '../handlers/message.handler';
 import { eventHandlers } from '../handlers/event.handler';
 import { tasksHandlers } from '../handlers/tasks.handler';
 import { noteHandlers } from '../handlers/note.handler';
+
+import { callHistoryHandlers } from '../handlers/callHistory.handler';
 
 const AUTH = 'validateSession';
 
@@ -577,5 +581,52 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     messageHandlers.sendStanzaC2s,
   );
+
+  //start Call histroy routes
+  fastify.post(
+    '/api/saveCallHistory',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'save call history Api',
+        tags: ['call'],
+        body: callHistorySchema.saveCallHistory.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    callHistoryHandlers.saveCallHistory,
+  );
+
+  fastify.put(
+    '/api/updateCallHistory',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'update call history Api',
+        tags: ['call'],
+        params: callHistorySchema.updateCallHistory.params,
+        body: callHistorySchema.updateCallHistory.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    callHistoryHandlers.updateCallHistory,
+  );
+
+  fastify.get(
+    '/api/getCallHistroy',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Get by caller Api',
+        tags: ['call'],
+        //body: callHistorySchema.updateCallHistroy.body,
+        params: callHistorySchema.getCallHistory.params
+        // response: userSchema.createTeamRes
+      },
+    },
+    callHistoryHandlers.getCallHistory,
+  );
+  //end Call histroy routes
+
   done();
 };
