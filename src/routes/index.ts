@@ -25,6 +25,9 @@ import { noteHandlers } from '../handlers/note.handler';
 
 import { callHistoryHandlers } from '../handlers/callHistory.handler';
 
+import { ejabberdConfigHandlers } from '../handlers/ejabbredConfig.handler';
+import { ejabbredConfigSchema } from '../schema/ejabbredConfig.schema';
+
 const AUTH = 'validateSession';
 
 /**
@@ -627,6 +630,63 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     callHistoryHandlers.getCallHistory,
   );
   //end Call histroy routes
+  fastify.post(
+    '/api/vhost',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: ' Virtual host add Api',
+        tags: ['host'],
+        body: ejabbredConfigSchema.addVhost.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    ejabberdConfigHandlers.addVhost,
+  );
+
+  fastify.delete(
+    '/api/vhost/:vhost',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Virtual host delete Api',
+        tags: ['host'],
+        params: ejabbredConfigSchema.deleteVhost.params,
+        // response: userSchema.createTeamRes
+      },
+    },
+    ejabberdConfigHandlers.deleteVhost,
+  );
+
+  fastify.put(
+    '/api/vhost/:vhost',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Virtual host update Api',
+        tags: ['host'],
+        params: ejabbredConfigSchema.updateVhost.params,
+        body: ejabbredConfigSchema.updateVhost.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    ejabberdConfigHandlers.updateVhost,
+  );
+
+  fastify.get(
+    '/api/vhost',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Virtual host update Api',
+        tags: ['host'],
+        //params: ejabbredConfigSchema.updateVhost.params,
+        //body: ejabbredConfigSchema.updateVhost.body,
+        response: ejabbredConfigSchema.getRes
+      },
+    },
+    ejabberdConfigHandlers.getVhost,
+  );
 
   done();
 };

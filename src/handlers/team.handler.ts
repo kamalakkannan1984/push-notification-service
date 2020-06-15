@@ -456,43 +456,60 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
     data.fromJid = req.body.fromJid;
     data.toJid = req.body.toJid;
     const teamMemberFrom = data.fromJid.split('@');
-    const teamMemberTo = data.toJid.split('@');
     const recordFrom = await userModel.getUserById(teamMemberFrom[0]);
-    const recordTo = await userModel.getUserById(teamMemberTo[0]);
-    if (recordFrom.length === 1 && recordTo.length === 1) {
+
+    if (recordFrom.length === 1) {
       const team = data.name.match(/\d+/g);
-      memberData.team_id = team[0];
-      memberData.SIPID = teamMemberTo[0];
-      memberData.processtype = 1;
-      const addResult = await userModel.addRemoveMember(memberData);
-      if (addResult[0].errcode !== -1) {
-        addMember.name = req.body.name;
-        addMember.service = req.body.service;
-        addMember.jid = data.toJid;
+      const memberDataArr = data.toJid.split(',');
+
+      let teamMemberTo = '';
+      for (let i = 0; i < memberDataArr.length; i++) {
+        teamMemberTo = memberDataArr[i].split('@');
+        memberData.team_id = team[0];
+        memberData.SIPID = teamMemberTo[0];
+        memberData.processtype = 1;
+        await userModel.addRemoveMember(memberData);
+      }
+      //if (addResult[0].errcode !== -1) {
+      const teamService = new TeamService();
+      addMember.name = req.body.name;
+      addMember.service = req.body.service;
+      //
+      const members = data.toJid;
+      const memberArr = members.split(',');
+      const userIdArr = [];
+      for (let i = 0; i < memberArr.length; i++) {
+        addMember.jid = memberArr[i];
         addMember.affiliation = 'member';
-        const teamService = new TeamService();
-        const setRoomAffiliationsResult = await teamService.setRoomAffiliation(addMember);
-        teamData.name = data.name;
-        teamData.service = data.service;
-        teamData.password = '';
-        teamData.reason = data.name;
-        teamData.users = data.toJid;
-        const messageService = new MessageService();
-        await messageService.sendDirectInvitation(teamData);
-        const messageData: any = {};
-        messageData.type = 'chat';
-        messageData.from = data.fromJid;
-        messageData.to = teamData.name + '@' + teamData.service;
-        messageData.subject = '';
-        //messageData.body = recordFrom[0].caller_id + ' Added you';
-        //await messageService.sendMessage(messageData);
-        //messageData.to = teamData.name + '@' + teamData.service;
+        await teamService.setRoomAffiliation(addMember);
+        userIdArr.push(addMember.jid);
+      }
+      //
+      teamData.name = data.name;
+      teamData.service = data.service;
+      teamData.password = '';
+      teamData.reason = data.name;
+      teamData.users = userIdArr.join(':');
+      const messageService = new MessageService();
+      await messageService.sendDirectInvitation(teamData);
+      const messageData: any = {};
+      messageData.type = 'chat';
+      messageData.from = data.fromJid;
+      messageData.to = teamData.name + '@' + teamData.service;
+      messageData.subject = '';
+      //messageData.body = recordFrom[0].caller_id + ' Added you';
+      //await messageService.sendMessage(messageData);
+      //messageData.to = teamData.name + '@' + teamData.service;
+      for (let i = 0; i < memberDataArr.length; i++) {
+        teamMemberTo = memberDataArr[i].split('@');
+        const recordTo = await userModel.getUserById(teamMemberTo[0]);
         messageData.body = recordFrom[0].caller_id + ' Added ' + recordTo[0].caller_id;
         await messageService.sendMessage(messageData);
-        res.send({ status_code: 200, message: 'Member added successfully' });
-      } else {
-        res.send({ status_code: 404, message: addResult[0].errmsg });
       }
+      res.send({ status_code: 200, message: 'Member added successfully' });
+      /*} else {
+        res.send({ status_code: 404, message: addResult[0].errmsg });
+      }*/
     } else {
       res.send({ status_code: 404, message: 'User not found' });
     }
@@ -534,7 +551,9 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
         //await messageService.sendMessage(messageData);
         //messageData.to = data.name + '@' + data.service;
         messageData.body = recordFrom[0].caller_id + ' Removed ' + recordTo[0].caller_id;
-        await messageService.sendMessage(messageData);
+        console.log(messageData);
+        const l = await messageService.sendMessage(messageData);
+        console.log(l);
         removeMember.name = req.body.name;
         removeMember.service = req.body.service;
         removeMember.jid = data.toJid;
