@@ -8,10 +8,10 @@ export const callHistoryModel: any = {};
 /**
  * save call history
  */
-callHistoryModel.saveCallHistory = (data: any, callCollection: any) => {
+callHistoryModel.saveCallHistory = (data: any, callsCollection: any) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const res = await callCollection.insertOne(data);
+            const res = await callsCollection.insertOne(data);
             resolve(res);
         } catch (err) {
             console.log(err);
@@ -23,11 +23,11 @@ callHistoryModel.saveCallHistory = (data: any, callCollection: any) => {
 /**
  * update call history
  */
-callHistoryModel.updateCallHistory = (uid: string, data: any, callCollection: any) => {
+callHistoryModel.updateCallHistory = (uuid: string, data: any, callsCollection: any) => {
     return new Promise(async (resolve, reject) => {
         try {
             console.log('update call history');
-            const res = await callCollection.updateOne({ uid: uid }, { $set: data });
+            const res = await callsCollection.updateOne({ uuid: uuid }, { $set: data });
             resolve(res);
         } catch (err) {
             console.log(err);
@@ -55,16 +55,16 @@ callHistoryModel.deleteCallHistory = (uid: string, callCollection: any) => {
 /**
  * get call history by caller id
  */
-callHistoryModel.getCallHistory = (data: any, callCollection: any) => {
+callHistoryModel.getCallHistory = (ext: string, callsCollection: any) => {
     return new Promise(async (resolve, reject) => {
         try {
             console.log('get call history');
-            callCollection
+            callsCollection
                 .find({
                     $or: [{
-                        "sender": data.sender
+                        "from_caller": ext
                     }, {
-                        "receiver": data.sender
+                        "to_caller": ext
                     }]
                 })
                 .project({ _id: 0 })

@@ -37,9 +37,9 @@ callHistory.updateCallHistory = {
     params: {
         type: 'object',
         properties: {
-            uid: { type: 'string' },
+            uuid: { type: 'string' },
         },
-        required: ['uid'],
+        required: ['uuid'],
     },
     body: {
         type: 'object',
@@ -60,9 +60,9 @@ callHistory.getCallHistory = {
     params: {
         type: 'object',
         properties: {
-            from_or_to: { type: 'string' },
+            ext: { type: 'string' },
         },
-        required: ['from_or_to'],
+        required: ['ext'],
     },
 };
 

@@ -587,7 +587,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
 
   //start Call histroy routes
   fastify.post(
-    '/api/saveCallHistory',
+    '/api/call_history',
     {
       preValidation: [fastify.validateSession],
       schema: {
@@ -601,7 +601,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.put(
-    '/api/updateCallHistory',
+    '/api/call_history/:uuid',
     {
       preValidation: [fastify.validateSession],
       schema: {
@@ -616,7 +616,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
 
   fastify.get(
-    '/api/getCallHistroy',
+    '/api/call_history/:ext',
     {
       preValidation: [fastify.validateSession],
       schema: {
