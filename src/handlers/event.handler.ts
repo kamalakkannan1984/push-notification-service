@@ -5,6 +5,7 @@
 
 import { eventModel } from '../models/event.model';
 import MessageService from '../services/message.service';
+import { userModel } from '../models/user';
 const eventHandler: any = {};
 
 /**
@@ -58,6 +59,11 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
       const msgdata: any = {};
       const body = JSON.stringify(data);
       if (chatType === 'groupchat') {
+        //save group members 
+        const team = data.group_id.match(/\d+/g);
+        const result = await userModel.getTeamInfo(data.company_id, team[0], data.sip_id);
+        console.log(result);
+        //
         const stanzaData: any = {};
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
