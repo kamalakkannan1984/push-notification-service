@@ -52,7 +52,16 @@ tasksModel.getTasks = (data: any, tastsCollection: any) => {
     try {
       console.log('get tasks');
       tastsCollection
-        .find({ sip_id: data.sip_id })
+        .find({
+          $or: [
+            {
+              sip_id: data.sip_id,
+            },
+            {
+              conv_id: data.sip_id,
+            },
+          ],
+        })
         .project({ _id: 0 })
         .toArray()
         .then((tasks: any) => {

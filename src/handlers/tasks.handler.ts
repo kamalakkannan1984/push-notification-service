@@ -54,8 +54,6 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     const getTasks = await tasksModel.getTaskByUid(data.uid, tasksCollection);
     if (getTasks === null) {
-      data.roleType = 'owner';
-      await tasksModel.createTasks(data, tasksCollection);
       const messageService = new MessageService();
       const body = JSON.stringify(data);
       const msgdata: any = {};
@@ -102,6 +100,8 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
         console.log(stanzaData);
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        data.roleType = 'member';
+        await tasksModel.createTasks(data, tasksCollection);
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
@@ -155,7 +155,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
     data.action = req.body.action;
     data.trigger = req.body.trigger;
     data.owner_id = req.body.owner_id;
-    data.sip_id = req.body.sip_id;
+    //data.sip_id = req.body.sip_id;
     data.status = req.body.status;
     data.sender = req.body.sender;
     data.receiver = req.body.receiver;
@@ -178,7 +178,7 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
       let sendMessageResult;
       const msgdata: any = {};
       if (chatType === 'groupchat') {
-        //attendee functionality
+        // attendee functionality
         const attendeeMembers = data.attendee.split(',');
         let attendeeMember;
         for (let i = 0; i < attendeeMembers.length; i++) {
@@ -287,6 +287,7 @@ tasksHandler.getTasks = async function (req: any, res: any, done: any) {
     data.sip_id = req.params.sip_id;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     const getTasks = await tasksModel.getTasks(data, tasksCollection);
+    console.log(getTasks);
     res.send({ status_code: 200, result: getTasks });
   } catch (err) {
     console.log(err);

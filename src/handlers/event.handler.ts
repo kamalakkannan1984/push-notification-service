@@ -53,7 +53,6 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     const result = await eventModel.getEventByUid(data.uid, eventCollection);
     if (result === null) {
-      await eventModel.createEvent(data, eventCollection);
       const messageService = new MessageService();
       let sendMessageResult;
       const msgdata: any = {};
@@ -76,6 +75,7 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="EVENT" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        await eventModel.createEvent(data, eventCollection);
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
@@ -130,7 +130,7 @@ eventHandler.updateEvent = async function (req: any, res: any, done: any) {
     data.action = req.body.action;
     data.trigger = req.body.trigger;
     data.owner_id = req.body.owner_id;
-    data.sip_id = req.body.sip_id;
+    //data.sip_id = req.body.sip_id;
     data.status = req.body.status;
     data.sender = req.body.sender;
     data.receiver = req.body.receiver;

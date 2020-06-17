@@ -52,7 +52,16 @@ noteModel.getNote = (data: any, noteCollection: any) => {
     try {
       console.log('get note');
       noteCollection
-        .find({ sip_id: data.sip_id })
+        .find({
+          $or: [
+            {
+              sip_id: data.sip_id,
+            },
+            {
+              conv_id: data.sip_id,
+            },
+          ],
+        })
         .project({ _id: 0 })
         .toArray()
         .then((note: any) => {

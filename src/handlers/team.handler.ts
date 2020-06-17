@@ -78,8 +78,8 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
           },
           {
             name: 'vcard',
-            value: `<vCard xmlns='vcard-temp'><PHOTO><BINVAL>${data.photo_info}</BINVAL><TYPE>image/jpeg</TYPE></PHOTO></vCard>`
-          }
+            value: `<vCard xmlns='vcard-temp'><PHOTO><BINVAL>${data.photo_info}</BINVAL><TYPE>image/jpeg</TYPE></PHOTO></vCard>`,
+          },
         ];
         const createTeamResult = await teamService.createTeamWithOpts(teamData);
         if (createTeamResult === 0) {
@@ -101,15 +101,36 @@ teamHandler.createTeam = async function (req: any, res: any, done: any) {
           teamData.users = userIdArr.join(':');
           await messageService.sendDirectInvitation(teamData);
 
-          const messageData: any = {};
-          messageData.type = 'chat';
+          // send message used to send status message
+          /*const messageData: any = {};
+          messageData.type = 'groupchat';
           messageData.from = data.created_by + '@im01.unifiedring.co.uk';
           messageData.to = teamData.name + '@' + teamData.service;
           messageData.subject = '';
           messageData.body = record[0].caller_id + ' created group ' + data.team_name;
           console.log(messageData);
           const resl = await messageService.sendMessage(messageData);
-          console.log(resl);
+          console.log(resl);*/
+
+          // send message used to send status message
+          // stanza used to send status message
+          const stanzaData: any = {};
+          stanzaData.from = data.created_by + '@im01.unifiedring.co.uk';
+          stanzaData.to = teamData.name + '@' + teamData.service;
+          stanzaData.body = record[0].caller_id + ' created group ' + data.team_name;
+          /*stanzaData.stanza = `<message type='groupchat' id='${data.msgid}' from='${data.owner_id}'
+          to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/>
+          <origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/>
+          <active xmlns="http://jabber.org/protocol/chatstates"/></message>`; */
+          stanzaData.stanza = `<message type='groupchat' xmlns="jabber:client"
+          to='${stanzaData.to}'
+          from='${stanzaData.from}'><x xmlns="jabber:x:conference"
+         reason='${stanzaData.body}'
+         jid='${stanzaData.to}'/></message>`;
+          console.log(stanzaData);
+          await messageService.sendStanza(stanzaData);
+          // stanza used to send status message
+
           res.send({ status_code: 200, team_id: teamData.name, message: recordsets.errmsg });
         } else {
           res.send({ status_code: 200, message: 'Team create failed' });
@@ -178,7 +199,7 @@ teamHandler.updateTeam = async function (req: any, res: any, done: any) {
         await teamService.changeRoomOption(teamOptionData);
 
         const messageData: any = {};
-        messageData.type = 'chat';
+        messageData.type = 'groupchat';
         messageData.from = data.created_by + '@im01.unifiedring.co.uk';
         messageData.to = `${teamOptionData.name}@${teamOptionData.service}`;
         messageData.subject = '';
@@ -345,7 +366,7 @@ teamHandler.leaveTeam = async function (req: any, res: any, done: any) {
     const record = await userModel.getUserById(teamMember[0]);
     if (record.length === 1) {
       const messageData: any = {};
-      messageData.type = 'chat';
+      messageData.type = 'groupchat';
       messageData.from = data.jid;
       messageData.to = data.name + '@' + data.service;
       messageData.subject = '';
@@ -493,7 +514,7 @@ teamHandler.addMember = async function (req: any, res: any, done: any) {
       const messageService = new MessageService();
       await messageService.sendDirectInvitation(teamData);
       const messageData: any = {};
-      messageData.type = 'chat';
+      messageData.type = 'groupchat';
       messageData.from = data.fromJid;
       messageData.to = teamData.name + '@' + teamData.service;
       messageData.subject = '';
@@ -543,7 +564,7 @@ teamHandler.removeMember = async function (req: any, res: any, done: any) {
       if (removeResult[0].errcode !== -1) {
         const messageService = new MessageService();
         const messageData: any = {};
-        messageData.type = 'chat';
+        messageData.type = 'groupchat';
         messageData.from = data.fromJid;
         messageData.to = data.name + '@' + data.service;
         messageData.subject = '';

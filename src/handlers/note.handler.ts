@@ -24,6 +24,7 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
     data.sender = req.body.sender;
     data.msgid = req.body.msgid;
     data.receiver = req.body.receiver;
+    data.conv_id = req.body.conv_id;
     data.group_id = req.body.group_id;
     data.owner_id = req.body.owner_id;
     data.company_id = req.body.company_id;
@@ -35,7 +36,6 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNoteByUid(data.uid, noteCollection);
     if (result === null) {
-      await noteModel.createNote(data, noteCollection);
       const body = JSON.stringify(data);
       const messageService = new MessageService();
       let sendMessageResult;
@@ -58,6 +58,7 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
         stanzaData.stanza = `<message type='${chatType}' id='${data.msgid}' from='${data.owner_id}' to='${data.receiver}'><body>${body}</body><markable xmlns="urn:xmpp:chat-markers:0"/><origin-id id='${data.msgid}' xmlns="urn:xmpp:sid:0"/><message-type value="NOTE" xmlns="urn:xmpp:message-correct:0"/><thread parent="">${data.thread_id}</thread><active xmlns="http://jabber.org/protocol/chatstates"/></message>`;
         sendMessageResult = await messageService.sendStanza(stanzaData);
       } else {
+        await noteModel.createNote(data, noteCollection);
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
         msgdata.to = data.receiver;
@@ -97,12 +98,13 @@ noteHandler.updateNote = async function (req: any, res: any, done: any) {
     data.sender = req.body.sender;
     data.msgid = req.body.msgid;
     data.receiver = req.body.receiver;
+    data.conv_id = req.body.conv_id;
     data.group_id = req.body.group_id;
     data.owner_id = req.body.owner_id;
     data.company_id = req.body.company_id;
     data.thread_id = req.body.thread_id;
     data.event_id = req.body.event_id;
-    data.sip_id = req.body.sip_id;
+    // data.sip_id = req.body.sip_id;
     const chatType = data.group_id ? 'groupchat' : 'chat';
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNoteByUid(uid, noteCollection);
