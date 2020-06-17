@@ -23,7 +23,7 @@ eventModel.updateEvent = (uid: string, data: any, eventCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update Event');
-      const res = await eventCollection.updateOne({ uid: uid }, { $set: data });
+      const res = await eventCollection.update({ uid: uid }, { $set: data }, { multi: true });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -52,18 +52,12 @@ eventModel.getEvent = (data: any, eventCollection: any) => {
     try {
       console.log('get event');
       eventCollection
-        .find({
-          $or: [{
-            "sender": data.sender
-          }, {
-            "receiver": data.sender
-          }]
-        })
+        .find({ sip_id: data.sip_id })
         .project({ _id: 0 })
         .toArray()
         .then((event: any) => {
           resolve(event);
-        })
+        });
     } catch (err) {
       console.log(err);
       reject(err);

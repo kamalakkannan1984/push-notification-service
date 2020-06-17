@@ -59,11 +59,17 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
       const msgdata: any = {};
       const body = JSON.stringify(data);
       if (chatType === 'groupchat') {
-        //save group members 
+        //save group members
         const team = data.group_id.match(/\d+/g);
-        const result = await userModel.getTeamInfo(data.company_id, team[0], data.sip_id);
-        console.log(result);
-        //
+        const getTeamResult = await userModel.getTeamInfo(data.company_id, team[0], data.sip_id);
+        const teamMember = getTeamResult[0].team_members;
+        const teamMembers = teamMember.split(',');
+        for (let i = 0; i < teamMembers.length; i++) {
+          data.sip_id = teamMembers[i];
+          delete data._id;
+          await eventModel.createEvent(data, eventCollection);
+        }
+        //save group members
         const stanzaData: any = {};
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
@@ -97,7 +103,7 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
  *
  * @param {Object} req - request object
  * @param {Object} reply - response object
- * @description - update event function
+ * @description - update event function by Uid
  */
 eventHandler.updateEvent = async function (req: any, res: any, done: any) {
   try {
@@ -213,7 +219,7 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
           isDeleted: true,
           msg: 'The Message has been deleted',
           uid: uid,
-          deletedId: result.msgid
+          deletedId: result.msgid,
         });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
@@ -236,10 +242,16 @@ eventHandler.deleteEvent = async function (req: any, res: any, done: any) {
   }
 };
 
+/**
+ * Get Event by sip_id
+ * @param req
+ * @param res
+ * @param done
+ */
 eventHandler.getEvent = async function (req: any, res: any, done: any) {
   try {
     const data: any = {};
-    data.sender = req.body.sender_or_receiver;
+    data.sip_id = req.params.sip_id;
     const eventCollection = await this.mongo.MONGO1.db.collection('event');
     const result = await eventModel.getEvent(data, eventCollection);
     res.send({ status_code: 200, result: result });

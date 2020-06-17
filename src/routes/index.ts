@@ -328,14 +328,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     eventHandlers.createEvent,
   );
 
-  fastify.post(
-    '/api/get_event',
+  fastify.get(
+    '/api/event/:sip_id',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Get event api',
         tags: ['event'],
-        body: eventSchema.getEvent.body,
+        params: eventSchema.getEvent.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -385,14 +385,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     tasksHandlers.createTasks,
   );
 
-  fastify.post(
-    '/api/get_tasks',
+  fastify.get(
+    '/api/tasks/:sip_id',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Get tasks api',
         tags: ['tasks'],
-        body: tasksSchema.getTasks.body,
+        params: tasksSchema.getTasks.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -442,14 +442,14 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     noteHandlers.createNote,
   );
 
-  fastify.post(
-    '/api/get_note',
+  fastify.get(
+    '/api/note/:sip_id',
     {
       preValidation: [fastify.validateSession],
       schema: {
         description: 'Get note api',
         tags: ['note'],
-        body: noteSchema.getNote.body,
+        params: noteSchema.getNote.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -623,7 +623,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         description: 'Get by caller Api',
         tags: ['call'],
         //body: callHistorySchema.updateCallHistroy.body,
-        params: callHistorySchema.getCallHistory.params
+        params: callHistorySchema.getCallHistory.params,
         // response: userSchema.createTeamRes
       },
     },
@@ -682,7 +682,7 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
         tags: ['host'],
         //params: ejabbredConfigSchema.updateVhost.params,
         //body: ejabbredConfigSchema.updateVhost.body,
-        response: ejabbredConfigSchema.getRes
+        response: ejabbredConfigSchema.getRes,
       },
     },
     ejabberdConfigHandlers.getVhost,

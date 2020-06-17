@@ -5,6 +5,7 @@
 
 import { noteModel } from '../models/note.model';
 import MessageService from '../services/message.service';
+import { userModel } from '../models/user';
 const noteHandler: any = {};
 
 /**
@@ -40,6 +41,17 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
       let sendMessageResult;
       const msgdata: any = {};
       if (chatType === 'groupchat') {
+        //save group members
+        const team = data.group_id.match(/\d+/g);
+        const getTeamResult = await userModel.getTeamInfo(data.company_id, team[0], data.sip_id);
+        const teamMember = getTeamResult[0].team_members;
+        const teamMembers = teamMember.split(',');
+        for (let i = 0; i < teamMembers.length; i++) {
+          data.sip_id = teamMembers[i].trim();
+          delete data._id;
+          await noteModel.createNote(data, noteCollection);
+        }
+        //save group members
         const stanzaData: any = {};
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
@@ -76,7 +88,6 @@ noteHandler.createNote = async function (req: any, res: any, done: any) {
  */
 noteHandler.updateNote = async function (req: any, res: any, done: any) {
   try {
-
     const uid = req.params.uid;
     const data: any = {};
     data.uid = uid;
@@ -172,7 +183,7 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
           isDeleted: true,
           msg: 'The Message has been deleted',
           uid: uid,
-          deletedId: result.msgid
+          deletedId: result.msgid,
         });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
@@ -199,8 +210,8 @@ noteHandler.deleteNote = async function (req: any, res: any, done: any) {
 //getNote
 noteHandler.getNote = async function (req: any, res: any, done: any) {
   try {
-    let data: any = {};
-    data.sender = req.body.sender_or_receiver;
+    const data: any = {};
+    data.sip_id = req.params.sip_id;
     const noteCollection = await this.mongo.MONGO1.db.collection('Note');
     const result = await noteModel.getNote(data, noteCollection);
     res.send({ status_code: 200, result: result });

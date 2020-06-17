@@ -115,19 +115,22 @@ event.deleteEvent = {
       group_id: { type: 'string' },
       receiver: { type: 'string' },
       thread_id: { type: 'string' },
-      msgid: { type: 'string' }
+      msgid: { type: 'string' },
     },
     required: ['uid', 'owner_id', 'receiver', 'group_id', 'msgid'],
   },
 };
 
+/**
+ * Get Event by sip_id
+ */
 event.getEvent = {
-  body: {
+  params: {
     type: 'object',
     properties: {
-      sender_or_receiver: { type: 'string' },
+      sip_id: { type: 'string' },
     },
-    required: ['sender_or_receiver'],
+    required: ['sip_id'],
   },
 };
 

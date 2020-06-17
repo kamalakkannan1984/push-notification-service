@@ -23,7 +23,7 @@ tasksModel.updateTasks = (uid: string, data: any, tasksCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update tasks');
-      const res = await tasksCollection.updateOne({ uid: uid }, { $set: data });
+      const res = await tasksCollection.update({ uid: uid }, { $set: data }, { multi: true });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -47,23 +47,17 @@ tasksModel.deleteTasks = (uid: string, tastsCollection: any) => {
 };
 
 // getTasks
-tasksModel.getTasks = (sender: string, tastsCollection: any) => {
+tasksModel.getTasks = (data: any, tastsCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('get tasks');
       tastsCollection
-        .find({
-          $or: [{
-            "sender": sender
-          }, {
-            "receiver": sender
-          }]
-        })
+        .find({ sip_id: data.sip_id })
         .project({ _id: 0 })
         .toArray()
         .then((tasks: any) => {
           resolve(tasks);
-        })
+        });
     } catch (err) {
       console.log(err);
       reject(err);

@@ -8,7 +8,6 @@ const note: any = {};
 /* ##################################################################################### */
 // create note
 
-
 note.createNote = {
   body: {
     type: 'object',
@@ -25,7 +24,7 @@ note.createNote = {
       company_id: { type: 'number' },
       thread_id: { type: 'string' },
       event_id: { type: 'string' },
-      sip_id: { type: 'string' }
+      sip_id: { type: 'string' },
     },
     required: ['company_id', 'owner_id', 'receiver', 'group_id', 'uid'],
   },
@@ -52,7 +51,7 @@ note.updateNote = {
       group_id: { type: 'string' },
       owner_id: { type: 'string' },
       company_id: { type: 'number' },
-      thread_id: { type: 'string' }
+      thread_id: { type: 'string' },
     },
     required: ['company_id', 'owner_id', 'receiver', 'group_id'],
   },
@@ -69,7 +68,7 @@ note.deleteNote = {
       group_id: { type: 'string' },
       receiver: { type: 'string' },
       msgid: { type: 'string' },
-      thread_id: { type: 'string' }
+      thread_id: { type: 'string' },
     },
     required: ['uid', 'group_id', 'owner_id', 'msgid', 'receiver'],
   },
@@ -77,12 +76,12 @@ note.deleteNote = {
 
 // getNote
 note.getNote = {
-  body: {
+  params: {
     type: 'object',
     properties: {
-      sender_or_receiver: { type: 'string' },
+      sip_id: { type: 'string' },
     },
-    required: ['sender_or_receiver'],
+    required: ['sip_id'],
   },
 };
 /* ######################################################################################## */

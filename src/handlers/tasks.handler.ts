@@ -5,6 +5,7 @@
 
 import { tasksModel } from '../models/tasks.model';
 import MessageService from '../services/message.service';
+import { userModel } from '../models/user';
 const tasksHandler: any = {};
 
 /**
@@ -53,12 +54,47 @@ tasksHandler.createTasks = async function (req: any, res: any, done: any) {
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
     const getTasks = await tasksModel.getTaskByUid(data.uid, tasksCollection);
     if (getTasks === null) {
+      data.roleType = 'owner';
       await tasksModel.createTasks(data, tasksCollection);
       const messageService = new MessageService();
       const body = JSON.stringify(data);
       const msgdata: any = {};
       let sendMessageResult;
       if (chatType === 'groupchat') {
+        //save group members
+        const team = data.group_id.match(/\d+/g);
+        const getTeamResult = await userModel.getTeamInfo(data.company_id, team[0], data.sip_id);
+        const teamMember = getTeamResult[0].team_members;
+        const teamMembers = teamMember.split(',');
+        for (let i = 0; i < teamMembers.length; i++) {
+          data.sip_id = teamMembers[i].trim();
+          data.roleType = 'member';
+          delete data._id;
+          await tasksModel.createTasks(data, tasksCollection);
+        }
+        //save group members
+
+        //attendee functionality
+        const attendeeMembers = data.attendee.split(',');
+        console.log(attendeeMembers);
+        let attendeeMember;
+        let attendeeSipId;
+        for (let i = 0; i < attendeeMembers.length; i++) {
+          attendeeMember = attendeeMembers[i].trim();
+          console.log(attendeeMember);
+          attendeeSipId = attendeeMember.split('@');
+          data.sip_id = attendeeSipId[0];
+          data.roleType = 'attendee';
+          delete data._id;
+          await tasksModel.createTasks(data, tasksCollection);
+          msgdata.type = 'chat';
+          msgdata.from = data.owner_id;
+          msgdata.to = attendeeMember;
+          msgdata.subject = 'TASKS';
+          msgdata.body = body;
+          sendMessageResult = await messageService.sendMessage(msgdata);
+        }
+        //attendee functionality
         const stanzaData: any = {};
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
@@ -142,6 +178,19 @@ tasksHandler.updateTasks = async function (req: any, res: any, done: any) {
       let sendMessageResult;
       const msgdata: any = {};
       if (chatType === 'groupchat') {
+        //attendee functionality
+        const attendeeMembers = data.attendee.split(',');
+        let attendeeMember;
+        for (let i = 0; i < attendeeMembers.length; i++) {
+          attendeeMember = attendeeMembers[i].trim();
+          msgdata.type = 'chat';
+          msgdata.from = data.owner_id;
+          msgdata.to = attendeeMember;
+          msgdata.subject = 'TASKS';
+          msgdata.body = body;
+          sendMessageResult = await messageService.sendMessage(msgdata);
+        }
+        //attendee functionality
         const stanzaData: any = {};
         stanzaData.from = data.owner_id;
         stanzaData.to = data.receiver;
@@ -207,7 +256,7 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
           isDeleted: true,
           msg: 'The Message has been deleted',
           uid: uid,
-          deletedId: getTasks.msgid
+          deletedId: getTasks.msgid,
         });
         msgdata.type = chatType;
         msgdata.from = data.owner_id;
@@ -234,9 +283,10 @@ tasksHandler.deleteTasks = async function (req: any, res: any, done: any) {
 // getTasks
 tasksHandler.getTasks = async function (req: any, res: any, done: any) {
   try {
-    const sender = req.body.sender_or_receiver;
+    const data: any = {};
+    data.sip_id = req.params.sip_id;
     const tasksCollection = await this.mongo.MONGO1.db.collection('Task');
-    const getTasks = await tasksModel.getTasks(sender, tasksCollection);
+    const getTasks = await tasksModel.getTasks(data, tasksCollection);
     res.send({ status_code: 200, result: getTasks });
   } catch (err) {
     console.log(err);

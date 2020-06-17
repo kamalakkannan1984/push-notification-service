@@ -23,7 +23,7 @@ noteModel.updateNote = (uid: string, data: any, noteCollection: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log('update note');
-      const res = await noteCollection.updateOne({ uid: uid }, { $set: data });
+      const res = await noteCollection.update({ uid: uid }, { $set: data }, { multi: true });
       resolve(res);
     } catch (err) {
       console.log(err);
@@ -52,18 +52,12 @@ noteModel.getNote = (data: any, noteCollection: any) => {
     try {
       console.log('get note');
       noteCollection
-        .find({
-          $or: [{
-            "sender": data.sender
-          }, {
-            "receiver": data.sender
-          }]
-        })
+        .find({ sip_id: data.sip_id })
         .project({ _id: 0 })
         .toArray()
         .then((note: any) => {
           resolve(note);
-        })
+        });
     } catch (err) {
       console.log(err);
       reject(err);
