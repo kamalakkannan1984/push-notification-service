@@ -64,7 +64,7 @@ eventHandler.createEvent = async function (req: any, res: any, done: any) {
         const teamMember = getTeamResult[0].team_members;
         const teamMembers = teamMember.split(',');
         for (let i = 0; i < teamMembers.length; i++) {
-          data.sip_id = teamMembers[i];
+          data.sip_id = teamMembers[i].trim();
           delete data._id;
           await eventModel.createEvent(data, eventCollection);
         }
