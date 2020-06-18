@@ -17,6 +17,8 @@ export const config = {
   ejabberdHost: 'im01.unifiedring.co.uk',
   ejabberdPort: '5443',
   ejabberdApiPrefix: 'api',
+  FCMkey:
+    'AAAAACKNddw:APA91bHCuk0JA_UynqJ_Oda2FoUayccFguMxbFrkQ8UbE80zoUBBdK-f-XG-6kBNn6EMY-ti3LOKjvqndwJiKTlNNCKP7HCoS5YWo47xQPEQTa1eMB7aDa6yvWrbpUmpsbxUePNIE7iQ',
   cors_options: {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

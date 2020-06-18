@@ -28,6 +28,9 @@ import { callHistoryHandlers } from '../handlers/callHistory.handler';
 import { ejabberdConfigHandlers } from '../handlers/ejabbredConfig.handler';
 import { ejabbredConfigSchema } from '../schema/ejabbredConfig.schema';
 
+import { pushNotificationHandlers } from '../handlers/pushNotification.handler';
+import { pushNotificationSchema } from '../schema/pushNotification.schema';
+
 const AUTH = 'validateSession';
 
 /**
@@ -687,6 +690,36 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
     },
     ejabberdConfigHandlers.getVhost,
   );
+
+  //push notification
+  fastify.post(
+    '/api/push_notification_andriod',
+    {
+      //preValidation: [fastify.validateSession],
+      schema: {
+        description: 'send push notification andriod',
+        tags: ['push notification'],
+        body: pushNotificationSchema.pushNotificationAndriod.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    pushNotificationHandlers.pushNotificationAndriod,
+  );
+
+  fastify.post(
+    '/api/push_notification_ios',
+    {
+      //preValidation: [fastify.validateSession],
+      schema: {
+        description: 'send push notification ios',
+        tags: ['push notification'],
+        body: pushNotificationSchema.pushNotificationIos.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    pushNotificationHandlers.pushNotificationIos,
+  );
+  //push notification
 
   done();
 };
