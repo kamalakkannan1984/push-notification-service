@@ -42,8 +42,10 @@ pushNotificationHandler.pushNotificationAndriod = async function (req: any, res:
 
     fcm.send(message, function (err: any, response: any) {
       if (err) {
+        console.log(err);
         res.send({ status_code: 200, message: 'notification sent failed' });
       } else {
+        console.log(response);
         res.send({ status_code: 200, message: 'notification sent successfully' });
       }
     });
@@ -66,9 +68,9 @@ pushNotificationHandler.pushNotificationIos = async function (req: any, res: any
     const settings = {
       apn: {
         token: {
-          key: './certs/key.p8', // optionally: fs.readFileSync('./certs/key.p8')
-          keyId: 'ABCD',
-          teamId: 'EFGH',
+          key: '../../certfile/message.p12', // optionally: fs.readFileSync('./certs/key.p8')
+          //keyId: 'ABCD',
+          //teamId: 'EFGH',
         },
         production: false, // true for APN production environment, false for APN sandbox environment,
       },
@@ -82,20 +84,17 @@ pushNotificationHandler.pushNotificationIos = async function (req: any, res: any
        * More details can be found under https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns
        */
 
-      alert: {
-        // apn, will take precedence over title and body
-        title: 'title',
-        body: 'body',
-        // details: https://github.com/node-apn/node-apn/blob/master/doc/notification.markdown#convenience-setters
-      },
+      alert,
     };
 
     push
       .send(registrationIds, dataArr)
       .then((results) => {
+        console.log(results);
         res.send({ status_code: 200, message: 'notification sent successfully' });
       })
       .catch((err) => {
+        console.log(err);
         res.send({ status_code: 200, message: 'notification sent failed' });
       });
   } catch (err) {

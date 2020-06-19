@@ -1,8 +1,8 @@
 /**
  *
  */
-import * as sql from 'mssql';
-import * as db from '../db/index';
+import sql from 'mssql';
+import { mssqlPoolConnection } from '../db/index';
 import { utils } from '../utils/utils';
 import { config } from '../config/app';
 export const userModel: any = {};
@@ -11,9 +11,8 @@ export const userModel: any = {};
 userModel.login = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         console.log(data);
         request.input('login_user_name', sql.Text, data.login_user_name);
         request.input('login_password', sql.Text, data.login_password);
@@ -48,9 +47,8 @@ userModel.login = (data: any) => {
 userModel.getTeamInfo = (company_id: number, team_id: number, SIPID: string) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('company_id', sql.Int, company_id);
         request.input('team_id', sql.Int, team_id);
         request.input('SIPID', sql.Int, SIPID);
@@ -74,9 +72,8 @@ userModel.getTeamInfo = (company_id: number, team_id: number, SIPID: string) => 
 userModel.getCompanyContact = (company_id: number) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         // sp name: ur_ma_workcontact_get
         //request.input('login_user_name', sql.Text, 'k.rajesh@vectone.com')
         //request.input('timestamp', sql.Int, 0)
@@ -103,9 +100,8 @@ userModel.getCompanyContact = (company_id: number) => {
 userModel.saveCreateTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         const dataArr = data;
         request.input('company_id', sql.Int, dataArr.company_id);
         request.input('team_id', sql.Int, dataArr.team_id);
@@ -144,9 +140,8 @@ userModel.saveCreateTeam = (data: any) => {
 userModel.getUserById = (sip_login_id: number) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('sip_login_id', sql.Int, sip_login_id);
         request.execute('ur_app_get_user_individual_details', (err: any, result: any) => {
           // ... error checks
@@ -168,9 +163,8 @@ userModel.leaveTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log(data);
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('company_id', sql.Int, data.company_id);
         request.input('SIPID', sql.Int, data.SIPID);
         request.input('team', sql.Text, data.team);
@@ -194,9 +188,8 @@ userModel.leaveTeam = (data: any) => {
 userModel.deleteTeam = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('company_id', sql.Int, data.company_id);
         request.input('team', sql.Text, data.team);
         request.execute('ur_app_delete_team', (err: any, result: any) => {
@@ -219,9 +212,8 @@ userModel.addRemoveMember = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log(data);
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('team_id', sql.Int, data.team_id);
         request.input('SIPID', sql.Text, data.SIPID);
         request.input('processtype', sql.Int, data.processtype);
@@ -242,14 +234,12 @@ userModel.addRemoveMember = (data: any) => {
 };
 
 //role change
-
 userModel.roleChange = (data: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log(data);
-      const pool = new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-      pool.connect().then(() => {
-        const request = new sql.Request(pool);
+      mssqlPoolConnection.connect().then(() => {
+        const request = new sql.Request(mssqlPoolConnection);
         request.input('team_id', sql.Int, data.team_id);
         request.input('SIPID', sql.Text, data.SIPID);
         request.input('make_admin', sql.Int, data.make_admin);
@@ -268,4 +258,5 @@ userModel.roleChange = (data: any) => {
     }
   });
 };
+
 // module.exports = userModel;
