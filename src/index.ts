@@ -7,6 +7,8 @@ import { utils } from './utils/utils';
 import { authHandler } from './handlers/auth.hanlder';
 import { configureRoutes } from './routes';
 
+// import * as db from './db/index';
+require('./db/index');
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
   logger: true,
   trustProxy: true,

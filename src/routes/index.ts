@@ -31,6 +31,9 @@ import { ejabbredConfigSchema } from '../schema/ejabbredConfig.schema';
 import { pushNotificationHandlers } from '../handlers/pushNotification.handler';
 import { pushNotificationSchema } from '../schema/pushNotification.schema';
 
+import { chatHistoryHandlers } from '../handlers/chatHistory.handler';
+import { chatHistorySchema } from '../schema/chatHistory.schema';
+
 const AUTH = 'validateSession';
 
 /**
@@ -721,5 +724,19 @@ export const configureRoutes = (fastify: any, options: any, done: any) => {
   );
   //push notification
 
+  //Ejabberd chat back up history / recent message
+  fastify.post(
+    '/api/get_last_messages_paginated',
+    {
+      preValidation: [fastify.validateSession],
+      schema: {
+        description: 'Get last message with paginated',
+        tags: ['chat'],
+        body: chatHistorySchema.getLastMessages.body,
+        // response: userSchema.createTeamRes
+      },
+    },
+    chatHistoryHandlers.getLastMessages,
+  );
   done();
 };

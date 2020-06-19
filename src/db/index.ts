@@ -1,23 +1,41 @@
-
 //var sql = require("mssql");
-import * as sql from "mssql";
-var sqlConfig = {
-    user: 'smepbx',
-    password: 'smeswitch',
-    server: '10.22.2.86',
-    database: 'unifiedring'
+import * as sql from 'mssql';
+import mysql from 'mysql';
+
+const sqlConfig = {
+  user: 'smepbx',
+  password: 'smeswitch',
+  server: '10.22.2.86',
+  database: 'unifiedring',
 };
+
+/* 
+sql_type: mysql
+sql_server: "localhost"
+sql_database: "ejabberd"
+sql_username: "ejabberd"
+sql_password: "Vicarage@2019"
+*/
+
+export const mysqlConnection = mysql.createConnection({
+  host: '82.113.74.51',
+  user: 'ejabberd',
+  password: 'Vicarage@2019',
+  database: 'ejabberd',
+});
+
+mysqlConnection.connect();
+
 export const connectToSqlServer = async () => {
-    try {
-        return new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
-        //return pool;
-        /*return pool.connect().then(() => {
+  try {
+    return new sql.ConnectionPool('mssql://smepbx:smeswitch@10.22.2.86/unifiedring');
+    //return pool;
+    /*return pool.connect().then(() => {
             console.log("connected to the APP");
         });*/
-
-    } catch (err) {
-        console.error(err)
-    }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 /*export const connectToSqlServer = async () => {
@@ -55,5 +73,3 @@ request.execute('ur_app_get_team_info', (err: any, result: any) => {
 console.log(err);
 }
 } */
-
-
