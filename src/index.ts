@@ -1,14 +1,11 @@
 import fastify from 'fastify';
 import { Server, IncomingMessage, ServerResponse } from 'http';
-import fastify_mongodb from 'fastify-mongodb';
 import Ajv from 'ajv';
 import { config } from './config/app';
 import { utils } from './utils/utils';
 import { authHandler } from './handlers/auth.hanlder';
 import { configureRoutes } from './routes';
 
-// import * as db from './db/index';
-require('./db/index');
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
   logger: true,
   trustProxy: true,
@@ -16,13 +13,6 @@ const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> =
 
 server.register(require('fastify-swagger'), config.swagger_options);
 server.register(require('fastify-cors'), config.cors_options);
-
-// mongoDb connection
-// mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring
-server.register(fastify_mongodb, {
-  url: 'mongodb://smepbx:smeswitch@10.22.7.228:27017/Unifiedring',
-  name: 'MONGO1',
-});
 
 // add hooks with relevant handlers
 server.addHook('preHandler', utils.formReqData);

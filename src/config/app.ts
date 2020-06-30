@@ -5,20 +5,18 @@
 
 export const config = {
   server: {
-    //82.113.74.51
-    host: process.env.HOST ? process.env.HOST : 'localhost',
-    port: process.env.PORT ? process.env.PORT : 5002,
+    //82.113.74.60
+    host: process.env.HOST ? process.env.HOST : '82.113.74.51',
+    port: process.env.PORT ? process.env.PORT : 5003,
   },
+
   logger_level: process.env.LOGGER_LEVEL,
   jwt_secret: process.env.JWT_SECRET ? process.env.JWT_SECRET : 'sscret',
   basic_uname: process.env.BASIC_UNAME ? process.env.BASIC_UNAME : 'admin',
   basic_pw: process.env.BASIC_PW ? process.env.BASIC_PW : 'Ej@bberD',
   apiRoutePrefix: '/api',
-  ejabberdHost: 'im01.unifiedring.co.uk',
-  ejabberdPort: '5443',
-  ejabberdApiPrefix: 'api',
   FCMkey:
-    'AAAAACKNddw:APA91bHCuk0JA_UynqJ_Oda2FoUayccFguMxbFrkQ8UbE80zoUBBdK-f-XG-6kBNn6EMY-ti3LOKjvqndwJiKTlNNCKP7HCoS5YWo47xQPEQTa1eMB7aDa6yvWrbpUmpsbxUePNIE7iQ',
+    'AAAAGnWQkWU:APA91bGXf3fSHd6jM38WjHzlIqTizwChiyjA6KHMQoH_ivpKbSziympFO8h3arLhm5_MzYxnnT9PZvAEQAMISfnkF_RdMuzXfh8EdrGxkcra1jZQYx0cNVUqnqROHMOMiJtVOeD30klM',
   cors_options: {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -35,42 +33,18 @@ export const config = {
     exposeRoute: true,
     routePrefix: '/api/documentation',
     swagger: {
-      host: `${process.env.HOST ? process.env.HOST : '82.113.74.51'}:${process.env.PORT ? process.env.PORT : 5002}`,
+      host: `${process.env.HOST ? process.env.HOST : '82.113.74.51'}:${process.env.PORT ? process.env.PORT : 5003}`,
       info: {
-        title: 'Ejabberd Rest API Service',
-        description: 'Ejabberd Rest api swagger documentation',
+        title: 'Push notification Rest API Service',
+        description: 'Push notification Rest api swagger documentation',
         version: process.env.VERSION,
       },
       consumes: ['application/json'],
       produces: ['application/json'],
       tags: [
         {
-          name: 'health',
-          description: 'Testing related end-points',
-        },
-        {
-          name: 'user',
-          description: 'User related end-points',
-        },
-        {
-          name: 'team',
-          description: 'Team related end-points',
-        },
-        {
-          name: 'message',
-          description: 'Message related end-points',
-        },
-        {
-          name: 'event',
-          description: 'Event related end-points',
-        },
-        {
-          name: 'tasks',
-          description: 'Tasks related end-points',
-        },
-        {
-          name: 'note',
-          description: 'Note related end-points',
+          name: 'Notification',
+          description: 'Push notification related end-points',
         },
       ],
     },

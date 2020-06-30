@@ -1,56 +1,100 @@
 /**
  * @createdBy Kamal
- * @createdOn 18th June 2020
+ * @createdOn 27th June 2020
  */
 
-const pushNotification: any = {};
+const pushNotificationSchema: any = {};
 
 /* ##################################################################################### */
 
 /**
- * pushNotificationAndriod
+ * pushNotification
  */
-
-pushNotification.pushNotificationAndriod = {
+/*
+{
+  "campaign_name" : "",
+  "application" : ["VECTONE", "DELIGHTCALLING", “UNIFIEDRING”],
+  "device_type" : ["Android", "ios", "both"],
+  "target_audience": [xml],
+  "marketing_content" "notification message content"
+}
+*/
+pushNotificationSchema.pushNotification = {
   body: {
     type: 'object',
     properties: {
-      registration_token: { type: 'string' },
-      notification: {
+      campaign_name: { type: 'string' },
+      application: { type: 'string', enum: ['VEC', 'DC', 'UR'] },
+      device_type: { type: 'number', enum: [1, 2, 0] },
+      target_audience: { type: 'string' },
+      marketing_content: {
         type: 'object',
         properties: {
           title: { type: 'string' },
           body: { type: 'string' },
         },
       },
-      /*data: {
-        my_key: 'my value',
-        my_another_key: 'my another value',
-      },*/
     },
-    required: ['registration_token', 'notification'],
+    required: ['application', 'device_type', 'marketing_content'],
   },
 };
 
 /**
- * pushNotificationIos
+ * In app pushNotification
  */
-pushNotification.pushNotificationIos = {
+/*
+{
+  "campaign_name" : "",
+  "application" : ["VECTONE", ""],
+  "device_type" : ["Android", "ios", "both"],
+  "target_audience": [],
+  "marketing_content" ""
+ 
+    "offer_name": "Offer Name",
+    "offer_small_text": "Offer Small Text",
+    "offer_image": "offer image url",
+    "offer_header":[
+        {
+            "header": "Offer Header",
+            "header_text": "Offer Header Text"
+        },
+        {
+            "header": "Offer Header",
+            "header_text": "Offer Header Text"
+        }
+    ]
+}
+*/
+pushNotificationSchema.inAppPushNotification = {
   body: {
     type: 'object',
     properties: {
-      registrationIds: { type: 'string' },
-      alert: {
+      campaign_name: { type: 'string' },
+      application: { type: 'string', enum: ['VEC', 'DC', 'UR'] },
+      device_type: { type: 'string', enum: ['Android', 'ios', 'both'] },
+      target_audience: { type: 'string' },
+      marketing_content: {
         type: 'object',
         properties: {
-          title: { type: 'string' },
-          body: { type: 'string' },
+          offer_name: { type: 'string' },
+          offer_small_text: { type: 'string' },
+          offer_image: { type: 'string' },
+          offer_header: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                header: { type: 'string' },
+                header_text: { type: 'string' },
+              },
+            },
+          },
         },
       },
     },
-    required: ['registrationIds', 'alert'],
+    required: ['application', 'device_type', 'marketing_content'],
   },
 };
 
 /* ######################################################################################## */
-export const pushNotificationSchema = pushNotification;
+export const pushNotificationSchemas = pushNotificationSchema;

@@ -3,8 +3,6 @@
  * @createdOn 05th May 2020
  */
 
-import HealthService from '../services/health.service';
-
 const healthHandler: any = {};
 
 /**
@@ -15,8 +13,7 @@ const healthHandler: any = {};
  */
 healthHandler.getStatus = async function (req: any, res: any, done: any) {
   try {
-    const healthSerevice = new HealthService();
-    const status = await healthSerevice.status();
+    const status = 'Working!!!';
     res.send({ status_code: 200, message: status });
   } catch (err) {
     console.log(err);

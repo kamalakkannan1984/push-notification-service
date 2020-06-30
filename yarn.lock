@@ -2,14 +2,6 @@
 # yarn lockfile v1
 
 
-"@appunto/ejabberd-api-client@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@appunto/ejabberd-api-client/-/ejabberd-api-client-1.0.0.tgz#c86da2f9e48bbaad1061977940f506e4d26e751a"
-  integrity sha512-WIfd+D+8/uOeCtua3tVZaaMjoiQNE0wzQWE+ykYM9I+Iy2BlWjzFM3aczQmepQElXHVbXWS2HMw8Ye+r0OebuA==
-  dependencies:
-    axios "^0.19.0"
-    lodash.camelcase "^4.3.0"
-
 "@azure/ms-rest-azure-env@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-azure-env/-/ms-rest-azure-env-1.1.2.tgz#8505873afd4a1227ec040894a64fdd736b4a101f"
