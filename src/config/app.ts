@@ -5,8 +5,8 @@
 
 export const config = {
   server: {
-    //82.113.74.60
-    host: process.env.HOST ? process.env.HOST : '82.113.74.51',
+    //82.113.74.51
+    host: process.env.HOST ? process.env.HOST : 'localhost',
     port: process.env.PORT ? process.env.PORT : 5003,
   },
 

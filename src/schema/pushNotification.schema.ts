@@ -71,7 +71,7 @@ pushNotificationSchema.inAppPushNotification = {
     properties: {
       campaign_name: { type: 'string' },
       application: { type: 'string', enum: ['VEC', 'DC', 'UR'] },
-      device_type: { type: 'string', enum: ['Android', 'ios', 'both'] },
+      device_type: { type: 'number', enum: [1, 2, 0] },
       target_audience: { type: 'string' },
       marketing_content: {
         type: 'object',
