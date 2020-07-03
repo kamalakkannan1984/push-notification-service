@@ -26,34 +26,37 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
     data.target_audience = req.body.target_audience;
     data.marketing_content = req.body.marketing_content;
     const result = await userModel.getDeviceTokenDetails(data.application, data.device_type, data.target_audience);
-
-    for (let i = 0; i < result.length; i++) {
-      token = result[i].MessageToken;
-    }
-    const serverKey = config.FCMkey; // put your server key here
-    const fcm = new FCM(serverKey);
-    const message = {
-      // this may vary according to the message type (single recipient, multicast, topic, et cetera)
-      to: token,
-      collapse_key: '',
-
-      notification: data.marketing_content,
-
-      /*data: {
-        // you can send only notification or only data(or include both)
-        my_key: 'my value',
-        my_another_key: 'my another value',
-      }, */
-    };
-    await fcm.send(message, function (err: any, response: any) {
-      if (err) {
-        console.log(err);
-        res.send({ status_code: 200, message: 'notification sent failed' });
-      } else {
-        console.log(response);
-        res.send({ status_code: 200, message: 'notification sent successfully' });
+    if (result.length > 0) {
+      for (let i = 0; i < result.length; i++) {
+        token = result[i].MessageToken;
       }
-    });
+      const serverKey = config.FCMkey; // put your server key here
+      const fcm = new FCM(serverKey);
+      const message = {
+        // this may vary according to the message type (single recipient, multicast, topic, et cetera)
+        to: token,
+        collapse_key: '',
+
+        notification: data.marketing_content,
+
+        /*data: {
+          // you can send only notification or only data(or include both)
+          my_key: 'my value',
+          my_another_key: 'my another value',
+        }, */
+      };
+      fcm.send(message, (err: any, response: any) => {
+        if (err) {
+          console.log(err);
+          res.send({ status_code: 200, message: 'notification sent failed' });
+        } else {
+          console.log(response);
+          res.send({ status_code: 200, message: 'notification sent successfully' });
+        }
+      });
+    } else {
+      res.send({ status_code: 200, message: 'User not found' });
+    }
   } catch (err) {
     console.log(err);
     res.send({ status_code: 500, message: 'internal server error' });
