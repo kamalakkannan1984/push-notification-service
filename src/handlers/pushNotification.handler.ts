@@ -37,7 +37,10 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
         to: token,
         collapse_key: '',
 
-        notification: data.marketing_content,
+        notification: {
+          title: data.marketing_content.title,
+          body: data.marketing_content.body,
+        },
 
         /*data: {
           // you can send only notification or only data(or include both)
@@ -45,13 +48,14 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
           my_another_key: 'my another value',
         }, */
       };
+      console.log(message);
       fcm.send(message, (err: any, response: any) => {
         if (err) {
           console.log(err);
-          res.send({ status_code: 200, message: 'notification sent failed' });
+          res.send({ status_code: 200, error_code: -1, message: 'notification sent failed' });
         } else {
           console.log(response);
-          res.send({ status_code: 200, message: 'notification sent successfully' });
+          res.send({ status_code: 200, error_code: 0, message: 'notification sent successfully' });
         }
       });
     } else {
