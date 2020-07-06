@@ -26,40 +26,38 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
     data.target_audience = req.body.target_audience;
     data.marketing_content = req.body.marketing_content;
     const result = await userModel.getDeviceTokenDetails(data.application, data.device_type, data.target_audience);
+    console.log(result);
+    const serverKey = config.FCMkey; // put your server key here
+    const fcm = new FCM(serverKey);
+    let message = {};
     if (result.length > 0) {
       for (let i = 0; i < result.length; i++) {
         token = result[i].MessageToken;
+        message = {
+          // this may vary according to the message type (single recipient, multicast, topic, et cetera)
+          to: token,
+          collapse_key: '',
+          notification: {
+            title: data.marketing_content.title,
+            body: data.marketing_content.body,
+          },
+
+        };
+
+        fcm.send(message, (err: any, response: any) => {
+          if (err) {
+            console.log(err);
+            //res.send({ status_code: 200, error_code: -1, message: 'notification sent failed' });
+          } else {
+            console.log(response);
+          }
+        });
       }
-      const serverKey = config.FCMkey; // put your server key here
-      const fcm = new FCM(serverKey);
-      const message = {
-        // this may vary according to the message type (single recipient, multicast, topic, et cetera)
-        to: token,
-        collapse_key: '',
 
-        notification: {
-          title: data.marketing_content.title,
-          body: data.marketing_content.body,
-        },
+      res.send({ status_code: 200, error_code: 0, message: 'notification sent successfully' });
 
-        /*data: {
-          // you can send only notification or only data(or include both)
-          my_key: 'my value',
-          my_another_key: 'my another value',
-        }, */
-      };
-      console.log(message);
-      fcm.send(message, (err: any, response: any) => {
-        if (err) {
-          console.log(err);
-          res.send({ status_code: 200, error_code: -1, message: 'notification sent failed' });
-        } else {
-          console.log(response);
-          res.send({ status_code: 200, error_code: 0, message: 'notification sent successfully' });
-        }
-      });
     } else {
-      res.send({ status_code: 200, message: 'User not found' });
+      res.send({ status_code: 200, error_code: -1, message: 'User not found' });
     }
   } catch (err) {
     console.log(err);
