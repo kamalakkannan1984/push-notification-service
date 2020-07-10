@@ -7,6 +7,9 @@ const FCM = require('fcm-node');
 import PushNotifications from 'node-pushnotifications';
 import { config } from '../config/app';
 import { userModel } from '../models/user';
+import apn from 'apn';
+import path from 'path';
+import fs from 'fs';
 const pushNotificationHandler: any = {};
 
 /**
@@ -41,9 +44,8 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
             title: data.marketing_content.title,
             body: data.marketing_content.body,
           },
-
         };
-
+        console.log(message);
         fcm.send(message, (err: any, response: any) => {
           if (err) {
             console.log(err);
@@ -52,10 +54,40 @@ pushNotificationHandler.pushNotification = async function (req: any, res: any, d
             console.log(response);
           }
         });
+        //
+        var options = {
+          /*token: {
+            key: fs.readFileSync(path.resolve('certfile/vectone_push_notification.p12')),
+            keyId: '123456',
+            teamId: 'developer-team-id',
+          }, */
+
+          cert: fs.readFileSync(path.resolve('certfile/vectone_push_notification.p12')),
+          key: fs.readFileSync(path.resolve('certfile/vectone_push_notification.p12')),
+          passphrase: '123456',
+          production: false,
+        };
+        console.log(options);
+        var apnProvider = new apn.Provider(options);
+        console.log(apnProvider);
+        var note = new apn.Notification();
+
+        note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+        note.badge = 3;
+        note.sound = 'ping.aiff';
+        note.alert = '\uD83D\uDCE7 \u2709 You have a new message';
+        note.payload = { messageFrom: 'John Appleseed' };
+        //note.topic = '<your-app-bundle-id>';
+
+        // tslint:disable-next-line: no-shadowed-variable
+        apnProvider.send(note, token).then((result) => {
+          // see documentation for an explanation of result
+          console.log(result);
+        });
+        //
       }
 
       res.send({ status_code: 200, error_code: 0, message: 'notification sent successfully' });
-
     } else {
       res.send({ status_code: 200, error_code: -1, message: 'User not found' });
     }
